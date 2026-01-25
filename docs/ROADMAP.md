@@ -4,6 +4,8 @@ This roadmap outlines the phased development approach for Better You, following 
 
 Each phase delivers user value while building toward a scalable, production-ready platform.
 
+> **📋 Current Progress**: See [`STATUS.md`](../STATUS.md) for real-time phase completion status and current implementation focus.
+
 ---
 
 ## Phase 0 – Foundation ✅

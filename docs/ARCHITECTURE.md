@@ -2,17 +2,27 @@
 
 This document outlines the technical architecture, design decisions, and evolution strategy for the Better You platform.
 
+> **📋 Current Status**: See [`STATUS.md`](../STATUS.md) for current project phase, progress, and AI agent handoff information.
+
 ## Overview
 
 Better You is designed as a **production-grade, scalable personal development platform** that grows from a simple MVP to a distributed system capable of serving thousands of users.
 
-### Design Philosophy
+### Architectural Principles
 
-1. **Start Simple, Scale Incrementally**: Begin with proven technologies, add complexity only when needed
-2. **Type Safety Throughout**: End-to-end type safety from database to mobile app
-3. **Offline-First Mobile**: Mobile app works offline, syncs when connected
-4. **AI as Enhancement**: AI coaching enhances human agency, doesn't replace it
-5. **Observable by Design**: Comprehensive logging, metrics, and monitoring from day one
+1. **Mobile-First Product Design**: Mobile is the primary interface, all decisions flow from this
+2. **Modular Monolith Before Microservices**: Start with well-organized monolith, decompose only when scale demands it
+3. **Async-First for Slow Operations**: External operations and AI processing are non-blocking
+4. **Clear Separation of Concerns**: Each layer has distinct responsibilities
+5. **No Premature Infrastructure Complexity**: Add complexity only when real usage justifies it
+6. **Type Safety Throughout**: End-to-end type safety from database to mobile app
+7. **Observable by Design**: Comprehensive logging, metrics, and monitoring from day one
+
+### Architectural North Star
+
+> **Ship a real product fast, then scale ONLY where real usage demands it.**
+
+This architecture is designed to evolve **without collapsing under its own weight**.
 
 ---
 
@@ -128,16 +138,25 @@ graph TB
 - **PostgreSQL**: Primary database
 
 #### API Design
-- **REST APIs**: Simple, predictable endpoints
+- **REST/JSON**: Simple, predictable, versioned endpoints
+- **Stateless APIs**: No server-side session state
 - **Zod Validation**: Runtime type checking
 - **Error Handling**: Consistent error responses
 - **Rate Limiting**: API protection
+- **Deployed on Vercel**: Serverless, auto-scaling
 
-#### AI Integration
-- **Vercel AI SDK**: AI orchestration
+#### Authentication Strategy
+- **Auth0 / Clerk Integration**: Managed auth service (future)
+- **JWT Tokens**: Short expiration with refresh rotation
+- **Device-based Authentication**: Mobile-optimized flow
+- **Biometric Authentication**: On supported devices
+
+#### AI Integration (MVP)
+- **Vercel AI SDK**: AI orchestration within Next.js
 - **OpenAI/Claude**: LLM providers
-- **Async Processing**: Background AI tasks
+- **Async-Safe Processing**: Non-blocking AI operations
 - **Context Management**: Conversation history
+- **Designed for Extraction**: Can be moved to separate service later
 
 ### Database Design
 
@@ -164,6 +183,31 @@ ai_messages (id, conversation_id, role, content, created_at)
 
 -- User Sessions
 user_sessions (id, user_id, token, expires_at, created_at)
+
+-- Background Jobs (MVP)
+background_jobs (id, type, payload, status, scheduled_at, completed_at, created_at)
+```
+
+### Background Processing (MVP)
+
+#### Current Approach
+- **Scheduled Jobs**: Cron-based scheduling
+- **DB-backed Job Tables**: Persistent job queue
+- **In-process Execution**: Jobs run within Next.js API
+
+#### Use Cases
+- **Weekly Summaries**: Generate and send weekly progress reports
+- **Reminder Evaluation**: Determine when to send push notifications
+- **Habit Consistency Analysis**: Calculate streaks and patterns
+- **AI Batch Processing**: Non-urgent AI analysis
+
+#### Implementation
+```sql
+-- Job queue table
+background_jobs (
+  id, type, payload, status, 
+  scheduled_at, completed_at, created_at
+)
 ```
 
 ---
@@ -345,6 +389,63 @@ sequenceDiagram
 - **Deployment**: Container orchestration
 - **Database**: Sharding, multiple databases
 
+## Phase 2+ Evolution Strategy
+
+### AI Service Extraction
+When AI complexity grows beyond Next.js capabilities:
+
+- **Python Service**: Extract AI logic to dedicated service
+- **Async Communication**: HTTP or message queue based
+- **Capabilities**:
+  - Batch analysis and insights
+  - Long-running AI workflows
+  - Advanced personalization algorithms
+  - ML model training and inference
+
+### Messaging & Eventing Layer
+Introduced when service decoupling becomes necessary:
+
+#### Redis Integration
+- **Caching**: Frequently accessed data
+- **Rate Limiting**: API protection
+- **Pub/Sub**: Real-time event distribution
+- **Session Storage**: User session management
+
+#### RabbitMQ Integration
+- **Durable Workflows**: Reliable job processing
+- **Decoupled Consumers**: AI, notifications, analytics
+- **Dead Letter Queues**: Failed job handling
+- **Priority Queues**: Urgent vs. batch processing
+
+### Real-Time Layer
+Activated when community features justify the complexity:
+
+#### WebSocket Integration
+- **Group Activity Updates**: Live habit sharing
+- **Challenge Participation**: Real-time competition
+- **Presence Indicators**: Online status
+- **Live Coaching Sessions**: Interactive AI coaching
+
+#### Implementation Strategy
+- Start with simple polling
+- Upgrade to Server-Sent Events
+- Full WebSocket only when bidirectional communication is needed
+
+### Containerization & Orchestration Timeline
+
+#### Docker Introduction
+When service isolation becomes meaningful:
+- Multiple services need coordination
+- Development environment consistency required
+- Deployment complexity justifies containerization
+
+#### Kubernetes Introduction
+When horizontal scaling is required:
+- Traffic patterns demand auto-scaling
+- Service mesh benefits outweigh complexity
+- Infrastructure ownership becomes explicit goal
+- Multi-region deployment needed
+
 ---
 
 ## Security Considerations
@@ -369,25 +470,31 @@ sequenceDiagram
 
 ---
 
-## Monitoring & Observability
+## Observability & Reliability
 
 ### Application Monitoring
-- Error tracking (Sentry)
-- Performance monitoring
-- User analytics (privacy-focused)
-- API response times
+- **Error Tracking**: Sentry for exception monitoring
+- **Performance Monitoring**: API response times, mobile app performance
+- **User Analytics**: Privacy-focused usage patterns
+- **Structured Logging**: Consistent log format across services
 
 ### Infrastructure Monitoring
-- Database performance
-- API endpoint health
-- Memory and CPU usage
-- Network latency
+- **Database Performance**: Query times, connection pool usage
+- **API Endpoint Health**: Uptime, response times, error rates
+- **Resource Usage**: Memory, CPU, storage utilization
+- **Network Latency**: Client-to-API, service-to-service
 
 ### Business Metrics
-- User engagement
-- Habit completion rates
-- AI coaching effectiveness
-- Feature adoption
+- **User Engagement**: Daily/weekly active users, session duration
+- **Habit Completion Rates**: Success patterns, dropout analysis
+- **AI Coaching Effectiveness**: User satisfaction, engagement with suggestions
+- **Feature Adoption**: New feature usage, conversion funnels
+
+### Reliability Patterns
+- **Retry Strategies**: Exponential backoff for async workflows
+- **Circuit Breakers**: Prevent cascade failures
+- **Graceful Degradation**: Core features work when AI/external services fail
+- **Queue Depth Monitoring**: Background job processing health
 
 ---
 
@@ -439,9 +546,17 @@ sequenceDiagram
 
 ## Conclusion
 
-This architecture balances **simplicity with scalability**, allowing the Better You platform to start as a simple mobile app and evolve into a comprehensive personal development ecosystem.
+This architecture embodies the principle: **"Ship a real product fast, then scale ONLY where real usage demands it."**
 
-The key principles of **type safety**, **offline-first mobile experience**, and **incremental complexity** guide all technical decisions, ensuring the platform can grow sustainably while maintaining high code quality and user experience.
+The design balances **simplicity with scalability**, starting as a mobile-first modular monolith and evolving into a distributed system only when user growth and feature complexity justify the additional infrastructure.
+
+Key architectural decisions prioritize:
+- **Rapid MVP delivery** over premature optimization
+- **Modular monolith** over immediate microservices
+- **Async-first design** for external operations
+- **Clear evolution path** without architectural rewrites
+
+This approach ensures Better You can grow sustainably from hundreds to thousands of users while maintaining high code quality, user experience, and development velocity.
 
 ---
 

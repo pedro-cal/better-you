@@ -108,6 +108,8 @@ better-you/
 
 ## Quick Start
 
+> **🤖 For AI Agents**: See [`STATUS.md`](STATUS.md) for comprehensive project status, current phase, and implementation guidance.
+
 ### Prerequisites
 
 1. **Node.js 20.11.1** (managed via nvm):

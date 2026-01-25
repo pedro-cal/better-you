@@ -1,5 +1,7 @@
 # Better You - Implementation Progress Tracker
 
+> **🤖 For Current Status**: See [`../STATUS.md`](../STATUS.md) for up-to-date project status and AI agent handoff information. This document contains detailed implementation history.
+
 ## Overview
 This document tracks the implementation progress of the Better You project restructuring from a mobile-only repo to a full monorepo supporting mobile app + Next.js backend.
 

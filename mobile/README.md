@@ -2,6 +2,8 @@
 
 The React Native mobile application for the Better You personal development platform.
 
+> **📋 Project Status**: See [`../STATUS.md`](../STATUS.md) for current development phase and overall project context.
+
 ## Overview
 
 This is a modern React Native mobile app built with Expo, TypeScript, and a carefully curated set of libraries for scalable development. It's part of the Better You monorepo.
