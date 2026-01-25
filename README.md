@@ -1,58 +1,123 @@
-# BetterYou Mobile
+# Better You
 
-A modern React Native mobile application built with Expo, TypeScript, and a carefully curated set of libraries for scalable development.
+**Better You** is a **mobile-first, AI-powered personal development platform** focused on **habit building, consistency, and adaptive coaching**.
 
-## 🏗️ Architecture Overview
+The core problem it addresses is widely documented:  
+people struggle to sustain habits over time due to motivation decay, notification fatigue, and the lack of personalized feedback.
 
-### Tech Stack
+Better You combines:
+- Habit tracking
+- Smart reminders
+- Adaptive AI coaching
+- Optional community accountability
 
-- **Framework**: Expo SDK with React Native
-- **Language**: TypeScript for type safety
-- **Navigation**: Expo Router (file-based routing)
-- **State Management**: TanStack React Query for server state
-- **Storage**: React Native MMKV for high-performance local storage
-- **Validation**: Zod for runtime type validation
-- **Notifications**: Expo Notifications
-- **Styling**: React Native with design tokens
+This project is intentionally designed as:
+- A **production-grade, portfolio-level system**
+- A **learning vehicle for backend, infra, and AI**
+- A foundation that can realistically scale to **thousands of users** and support a **freemium business model**
 
-### Project Structure
+This repository documents both the **MVP implementation** and the **planned evolution path** toward a scalable, distributed system.
+
+---
+
+## Core Product Goals
+
+1. Help users **build and sustain habits**, not just track them
+2. Reduce dropout through **adaptive pacing and feedback**
+3. Provide **AI coaching that supports human agency**
+4. Enable **community accountability** without social overload
+5. Be **extensible, observable, and scalable by design**
+
+---
+
+## MVP Scope
+
+### Habit & Goal Tracking
+- Create habits with schedules, difficulty, and intent
+- Daily check-ins
+- Streaks and progress visualization
+- Flexible goal adjustments (frequency, rest days, intensity)
+
+### AI Coaching (MVP)
+- Contextual feedback based on recent activity
+- Suggestions when consistency drops
+- Natural language coaching interactions
+- Implemented inside the backend (async-safe)
+
+### Notifications & Feedback
+- Smart, adaptive reminders
+- Weekly summaries and reflections
+- Push notifications as the primary re-engagement channel
+
+### Community (MVP-light)
+- Small groups or challenges
+- Lightweight reinforcement
+- No feeds, likes, or engagement traps
+
+---
+
+## Tech Stack (MVP)
+
+### Mobile App
+- React Native + Expo
+- Offline-friendly where useful
+- Push notifications via Expo
+
+### Backend
+- Next.js (App Router, API Routes)
+- Hosted on Vercel
+- REST/JSON APIs
+
+### Database
+- Postgres
+- Schema-first, migration-driven
+
+### AI
+- Vercel AI SDK
+- Async-friendly orchestration
+
+---
+
+## Repository Structure
+
+This is a monorepo containing all Better You components:
 
 ```
-betteryou-mobile/
-├── app/                    # Expo Router navigation (file-based routing)
-│   ├── (tabs)/            # Tab navigation layout
-│   ├── _layout.tsx        # Root layout with providers
-│   └── habits.tsx         # Sample feature screen
-├── src/                   # Application source code
-│   ├── components/        # Reusable UI components
-│   ├── features/          # Feature-specific code
-│   │   └── habits/        # Sample habits feature
-│   ├── lib/              # Utilities and services
-│   │   ├── env.ts        # Environment configuration
-│   │   └── notifications.ts # Notification setup
-│   ├── state/            # State management
-│   │   └── query.ts      # React Query client
-│   └── styles/           # Design system
-│       └── tokens.ts     # Design tokens
-├── .cursor/              # IDE configuration
-├── .github/workflows/    # CI/CD workflows
-└── assets/              # Static assets
+better-you/
+├── mobile/                 # React Native mobile app
+│   ├── app/               # Expo Router screens
+│   ├── src/               # Mobile app source code
+│   ├── components/        # UI components
+│   ├── assets/            # Static assets
+│   └── package.json       # Mobile dependencies
+├── backend/               # Next.js API (future)
+│   ├── app/               # Next.js App Router
+│   ├── lib/               # Backend utilities
+│   └── package.json       # Backend dependencies
+├── shared/                # Shared types and utilities
+│   ├── src/
+│   │   ├── types.ts       # TypeScript definitions
+│   │   ├── schemas.ts     # Zod validation schemas
+│   │   └── utils.ts       # Common utilities
+│   └── package.json       # Shared dependencies
+├── docs/                  # Project documentation
+└── package.json           # Workspace configuration
 ```
 
-## 🚀 Quick Start
+---
+
+## Quick Start
 
 ### Prerequisites
 
 1. **Node.js 20.11.1** (managed via nvm):
-
-   ```powershell
+   ```bash
    nvm install 20.11.1
    nvm use 20.11.1
    ```
 
 2. **npm** (comes with Node.js):
-
-   ```powershell
+   ```bash
    npm --version  # Should be 10.x or higher
    ```
 
@@ -64,165 +129,110 @@ betteryou-mobile/
 ### Installation
 
 1. **Clone and setup**:
-
-   ```powershell
-   cd betteryou-mobile
+   ```bash
+   git clone <repository-url>
+   cd better-you
    npm install
-   cp .env.example .env
    ```
 
-2. **Start development server**:
-
-   ```powershell
-   npm run dev
+2. **Start mobile development**:
+   ```bash
+   npm run mobile:dev
+   # or
+   cd mobile && npm run dev
    ```
 
 3. **Test on device**:
    - Scan QR code with Expo Go app
    - Or run `npm run android` / `npm run ios` for emulators
 
-## 📚 Key Libraries & Rationale
+---
 
-### Core Dependencies
+## Available Scripts
 
-| Library                   | Purpose                 | Why Chosen                                                        |
-| ------------------------- | ----------------------- | ----------------------------------------------------------------- |
-| **@tanstack/react-query** | Server state management | Industry standard for data fetching, caching, and synchronization |
-| **zod**                   | Runtime validation      | Type-safe environment config and API validation                   |
-| **react-native-mmkv**     | Local storage           | Fastest storage solution for React Native                         |
-| **expo-notifications**    | Push notifications      | Official Expo solution with great DX                              |
-| **expo-router**           | Navigation              | File-based routing, modern and intuitive                          |
-
-### Development Tools
-
-| Tool                       | Purpose         | Configuration                     |
-| -------------------------- | --------------- | --------------------------------- |
-| **ESLint**                 | Code linting    | React Native rules + custom rules |
-| **Prettier**               | Code formatting | Consistent formatting across team |
-| **Husky**                  | Git hooks       | Pre-commit formatting and linting |
-| **Jest + Testing Library** | Testing         | Component and unit testing        |
-| **TypeScript**             | Type safety     | Strict mode enabled               |
-
-## 🛠️ Available Scripts
-
+### Workspace Level
 ```bash
 # Development
-npm run dev           # Start Expo dev server
-npm run android       # Start on Android emulator
-npm run ios           # Start on iOS simulator
-npm run web           # Start web version
+npm run dev              # Start mobile app
+npm run mobile:dev       # Start mobile app
+npm run backend:dev      # Start backend (future)
 
 # Quality Assurance
-npm run typecheck     # TypeScript compilation check
-npm run lint          # Run ESLint
-npm run format        # Format code with Prettier
-npm run test          # Run Jest tests
-npm run verify        # Run all checks (typecheck + lint + test)
+npm run test             # Run all tests
+npm run lint             # Lint all packages
+npm run typecheck        # TypeScript check all packages
+npm run format           # Format all packages
+npm run verify           # Run all quality checks
 
 # Maintenance
-npm run clean         # Clean cache and node_modules
-npm run reset         # Reset Expo cache and restart
+npm run clean            # Clean all packages
 ```
 
-## 🏛️ Architecture Principles
+### Mobile App Specific
+```bash
+cd mobile
 
-### 1. **Separation of Concerns**
+# Development
+npm run dev              # Start Expo dev server
+npm run android          # Start on Android emulator
+npm run ios              # Start on iOS simulator
+npm run web              # Start web version
 
-- **`/app`**: Navigation and routing only
+# Quality Assurance
+npm run test             # Run Jest tests
+npm run lint             # Run ESLint
+npm run format           # Format with Prettier
+npm run typecheck        # TypeScript check
+npm run verify           # Run all checks
+
+# Maintenance
+npm run clean            # Clean cache and node_modules
+npm run reset            # Reset Expo cache
+```
+
+---
+
+## Architecture
+
+### Mobile App Architecture
+
+The mobile app follows a **feature-based architecture** with clear separation of concerns:
+
+- **`/app`**: Navigation and routing (Expo Router)
 - **`/src/features`**: Business logic grouped by feature
-- **`/src/components`**: Reusable UI components
+- **`/components`**: Reusable UI components
 - **`/src/lib`**: Utilities and external service integrations
 
-### 2. **Type Safety First**
+#### Key Technologies
+- **React Native 0.79.5** with **Expo SDK 53**
+- **TypeScript** for type safety
+- **React Query** for server state management
+- **MMKV** for high-performance local storage
+- **Zod** for runtime validation
+- **Expo Notifications** for push notifications
 
-- All external data validated with Zod schemas
-- Strict TypeScript configuration
-- Runtime environment validation
+#### State Management
+- **Server State**: React Query for API data, caching, and synchronization
+- **Local State**: React hooks for component state
+- **Persistent Storage**: MMKV for settings and offline data
+- **Shared State**: Shared package for common types and utilities
 
-### 3. **Performance Optimized**
+### Development Principles
 
-- MMKV for lightning-fast storage
-- React Query for intelligent caching
-- Minimal re-renders through proper state management
+1. **Type Safety First**: All external data validated with Zod schemas
+2. **Performance Optimized**: MMKV storage, React Query caching, minimal re-renders
+3. **Offline-Friendly**: Local storage with sync capabilities
+4. **Developer Experience**: Hot reloading, comprehensive linting, pre-commit hooks
 
-### 4. **Developer Experience**
+---
 
-- File-based routing for intuitive navigation
-- Hot reloading for instant feedback
-- Comprehensive linting and formatting
-- Pre-commit hooks prevent bad code
-
-## 🔧 Configuration Files
-
-### Environment Configuration
-
-**`.env`** (copy from `.env.example`):
-
-```env
-API_BASE_URL=http://10.0.2.2:3000
-APP_ENV=dev
-```
-
-**`src/lib/env.ts`** - Validates environment variables at runtime:
-
-```typescript
-import { z } from "zod";
-const schema = z.object({
-  API_BASE_URL: z.string().url(),
-  ENV: z.enum(["dev", "preview", "prod"]),
-});
-```
-
-### App Configuration
-
-**`app.config.ts`** - Expo configuration with environment support:
-
-- Dynamic configuration based on environment
-- Plugin setup for notifications
-- Platform-specific settings
-
-## 🧪 Testing Strategy
-
-### Current Setup
-
-- **Jest** with `jest-expo` preset
-- **React Native Testing Library** for component testing
-- **@testing-library/jest-native** for custom matchers
-
-### Test Structure
-
-```
-src/features/[feature]/__tests__/
-├── [feature].test.tsx      # Component tests
-├── [feature].hook.test.ts  # Hook tests
-└── [feature].utils.test.ts # Utility tests
-```
-
-### Example Test
-
-```typescript
-import { render } from "@testing-library/react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// Wrap components with providers for testing
-const TestWrapper = ({ children }) => {
-  const queryClient = new QueryClient();
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
-};
-```
-
-## 📱 Features Implementation Guide
+## Development Workflow
 
 ### Adding a New Feature
 
 1. **Create feature directory**:
-
    ```
-   src/features/[feature-name]/
+   mobile/src/features/[feature-name]/
    ├── index.ts                    # Export barrel
    ├── use[Feature].ts            # React Query hooks
    ├── [Feature]Screen.tsx        # Main component
@@ -230,233 +240,120 @@ const TestWrapper = ({ children }) => {
    └── __tests__/                 # Feature tests
    ```
 
-2. **Add route** in `app/` directory:
-
+2. **Add route** in `mobile/app/` directory:
    ```typescript
-   // app/[feature-name].tsx
+   // mobile/app/[feature-name].tsx
    import { [Feature]Screen } from "@/src/features/[feature-name]";
    export default [Feature]Screen;
    ```
 
-3. **Create data hook**:
-
+3. **Use shared types**:
    ```typescript
-   // src/features/[feature]/use[Feature].ts
-   import { useQuery } from "@tanstack/react-query";
-
-   export function use[Feature]() {
-     return useQuery({
-       queryKey: ["feature"],
-       queryFn: async () => {
-         // API call
-       }
-     });
-   }
+   import { Habit, HabitEntry } from "@better-you/shared";
    ```
 
-### State Management Patterns
-
-#### Server State (React Query)
-
-```typescript
-// Good: Feature-specific hooks
-export function useHabits() {
-  return useQuery({
-    queryKey: ["habits"],
-    queryFn: fetchHabits,
-  });
-}
-
-// Good: Mutations with optimistic updates
-export function useUpdateHabit() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateHabit,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["habits"]);
-    },
-  });
-}
-```
-
-#### Local State (React hooks)
-
-```typescript
-// Good: Keep local state minimal
-const [selectedId, setSelectedId] = useState<string | null>(null);
-
-// Good: Use MMKV for persistence
-import { storage } from "@/src/lib/storage";
-const [settings, setSettings] = useState(
-  () => storage.getString("user.settings") || defaultSettings,
-);
-```
-
-## 🔒 Best Practices
-
-### Code Organization
+### Best Practices
 
 #### ✅ Do
-
-- Group by feature, not by file type
-- Use barrel exports (`index.ts`) for clean imports
+- Group code by feature, not by file type
+- Use shared types from `@better-you/shared`
+- Validate API responses with Zod schemas
 - Keep components small and focused
-- Prefer composition over inheritance
+- Use React Query for all server state
 
 #### ❌ Don't
-
-- Put business logic in components
+- Put business logic in UI components
 - Create deeply nested folder structures
-- Use default exports for multiple exports
-- Mix UI and data fetching concerns
-
-### Performance
-
-#### ✅ Do
-
-```typescript
-// Memoize expensive calculations
-const expensiveValue = useMemo(() => heavyCalculation(data), [data]);
-
-// Use React Query for caching
-const { data } = useQuery({
-  queryKey: ["key"],
-  queryFn: fetchData,
-  staleTime: 5 * 60 * 1000, // 5 minutes
-});
-```
-
-#### ❌ Don't
-
-```typescript
-// Don't fetch data in components
-useEffect(() => {
-  fetch("/api/data").then(setData);
-}, []);
-
-// Don't create objects in render
-<Component style={{ marginTop: 10 }} />
-```
-
-### Type Safety
-
-#### ✅ Do
-
-```typescript
-// Validate API responses
-const UserSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-});
-type User = z.infer<typeof UserSchema>;
-
-// Use discriminated unions
-type LoadingState =
-  | { status: "loading" }
-  | { status: "success"; data: User[] }
-  | { status: "error"; error: string };
-```
-
-#### ❌ Don't
-
-```typescript
-// Don't use 'any'
-const data: any = response.json();
-
-// Don't skip validation
-const user = response.data; // No validation
-```
-
-## 🚀 Deployment
-
-### Environment Setup
-
-1. **Development**: Uses `.env` with local API
-2. **Preview**: EAS Preview builds for testing
-3. **Production**: EAS Production builds for stores
-
-### EAS Build Configuration
-
-```json
-// eas.json (to be created)
-{
-  "build": {
-    "development": {
-      "developmentClient": true
-    },
-    "preview": {
-      "distribution": "internal"
-    },
-    "production": {}
-  }
-}
-```
-
-## 🔧 Maintenance
-
-### Regular Tasks
-
-#### Weekly
-
-- Update dependencies: `npm update`
-- Review ESLint warnings
-- Check bundle size with `npx expo bundle-assets`
-
-#### Monthly
-
-- Expo SDK updates: `npx expo upgrade`
-- Security audit: `npm audit`
-- Clean up unused dependencies
-
-### Troubleshooting
-
-#### Common Issues
-
-1. **Metro bundler issues**:
-
-   ```bash
-   npm run reset  # Clear Expo cache
-   ```
-
-2. **TypeScript errors after updates**:
-
-   ```bash
-   npm run typecheck  # Check for type issues
-   ```
-
-3. **iOS build issues**:
-
-   ```bash
-   cd ios && pod install  # Update pods
-   ```
-
-4. **Git hooks not working**:
-   ```bash
-   npx husky install  # Reinstall hooks
-   ```
-
-### Performance Monitoring
-
-- Use Expo dev tools for bundle analysis
-- Monitor React Query DevTools in development
-- Profile with React DevTools
-- Test on older devices regularly
-
-## 📞 Support
-
-### Resources
-
-- [Expo Documentation](https://docs.expo.dev/)
-- [React Query Docs](https://tanstack.com/query/latest)
-- [React Native Performance](https://reactnative.dev/docs/performance)
-
-### Team Conventions
-
-- Follow Conventional Commits for commit messages
-- Use feature branches for development
-- Require PR reviews for main branch
-- Run `npm run verify` before committing
+- Skip validation for external data
+- Use `any` types
 
 ---
 
-_This README reflects the current architecture as of setup. Keep it updated as the project evolves._
+## Testing Strategy
+
+### Current Setup
+- **Jest** with `jest-expo` preset
+- **React Native Testing Library** for component testing
+- **@testing-library/jest-native** for custom matchers
+
+### Test Structure
+```
+mobile/src/features/[feature]/__tests__/
+├── [feature].test.tsx      # Component tests
+├── [feature].hook.test.ts  # Hook tests
+└── [feature].utils.test.ts # Utility tests
+```
+
+---
+
+## Project Roadmap
+
+### Phase 1: MVP Foundation ✅ (Current)
+- [x] Mobile app scaffolding with Expo Router
+- [x] Monorepo structure with shared types
+- [x] Development tooling and CI/CD
+- [x] Basic habits feature skeleton
+
+### Phase 2: Backend Implementation (Next)
+- [ ] Next.js API with App Router
+- [ ] Postgres database schema
+- [ ] User authentication system
+- [ ] Habit management APIs
+- [ ] AI integration foundation
+
+### Phase 3: Core Features
+- [ ] Complete habit tracking flow
+- [ ] Push notification system
+- [ ] Basic AI coaching
+- [ ] Data synchronization
+- [ ] User onboarding
+
+### Phase 4: Advanced Features
+- [ ] Community features
+- [ ] Advanced AI coaching
+- [ ] Analytics and insights
+- [ ] Premium features
+
+---
+
+## Why This Project Exists
+
+Better You is not a toy app.
+
+It exists to:
+- Demonstrate **real-world system design**
+- Practice **backend, infra, and AI integration**
+- Serve as a **credible portfolio artifact**
+- Grow incrementally without premature complexity
+
+Every technical choice is intentional.
+
+---
+
+## Contributing
+
+### Development Setup
+1. Follow the Quick Start guide above
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes with tests
+4. Run quality checks: `npm run verify`
+5. Submit a pull request
+
+### Commit Convention
+We use [Conventional Commits](https://www.conventionalcommits.org/):
+- `feat:` new features
+- `fix:` bug fixes
+- `docs:` documentation changes
+- `refactor:` code refactoring
+- `test:` adding tests
+- `chore:` maintenance tasks
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+_This README reflects the current architecture as of 2026-01-25. Keep it updated as the project evolves._

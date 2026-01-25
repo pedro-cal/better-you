@@ -1,4 +1,4 @@
-name: mobile-ci
+name: better-you-ci
 on:
   pull_request:
   push:
@@ -9,9 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20.x', cache: 'yarn' }
-      - run: corepack enable
-      - run: yarn install --immutable
-      - run: yarn typecheck
-      - run: yarn lint
-      - run: yarn test
+        with: { node-version: '20.x', cache: 'npm' }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test
