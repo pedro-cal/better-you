@@ -197,7 +197,7 @@ If issues arise:
 - **Root**: `package.json` (workspace), `README.md` (Better You plan)
 - **Mobile**: Updated `package.json`, `tsconfig.json` for monorepo, new `README.md`
 - **Shared**: Complete package with types, schemas, utils (`@better-you/shared`)
-- **Docs**: `ARCHITECTURE.md` with technical decisions and evolution strategy
+- **Docs**: `ARCHITECTURE.md` with technical decisions, `ROADMAP.md` with phased development plan
 - **CI/CD**: Updated `.github/workflows/ci.yml` for monorepo structure
 - **Progress**: `.cursor/PROGRESS.md` for ongoing tracking
 
