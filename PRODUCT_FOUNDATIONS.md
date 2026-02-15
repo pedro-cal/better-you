@@ -19,8 +19,10 @@ Better You is a **goal achievement platform** that combines capacity-aware plann
 - **Act-first navigation** — The core surface is **Act**; optional info surfaces can be **locked behind action** via a configurable Focus Wall
 - **Pods (auto-generated cohorts)** — Similar-goal cohorts are derived by the system; framing can be supportive or competitive depending on enabled layers
 - **Core domain objects:**
-  - **Goal** (queued/draft/active/paused/completed/abandoned/archived)
-  - **Path** (flexible journey toward a goal, one per goal at MVP)
+  - **LifeDomain** (Body, Mind, Relationships, Work, Money, Service, Spirituality)
+  - **Goal** (queued/draft/active/paused/completed/abandoned/archived; requires domain, optional journey)
+  - **Journey** (optional long-term theme; requires domain)
+  - **Path** (flexible execution plan toward a goal, one per goal at MVP)
   - **Step** (recurring or one-time action with cadence and minutes estimate)
   - **Check-in** (done/partial/skipped + optional difficulty/mood/log)
   - **Checkpoint** (weekly reflection; soft-gates new goals but never blocks daily progress)
@@ -211,11 +213,34 @@ When enabled layers include social/competitive framing, community signals must r
 
 ## 6. Domain Glossary
 
+### Life Domains
+
+Better You organizes goals and progress around **7 life domains**. Every goal and journey must belong to exactly one domain.
+
+**Domains:**
+- **Body** — Physical health, fitness, nutrition, movement, sleep, and bodily care
+- **Mind** — Learning, creativity, cognitive development, mental clarity, and intellectual growth
+- **Relationships** — Family, friendships, intimate partnerships, social connection, and relational health
+- **Work** — Career, professional development, meaningful occupation, and vocational identity
+- **Money** — Financial stability, planning, literacy, resource management, and economic security
+- **Service** — Contribution to others, community engagement, volunteering, and prosocial action
+- **Spirituality** — Values, meaning-making, reflection, faith (if present), transcendence, and existential well-being
+
+**Domain properties:**
+- Required for all Goals and Journeys
+- Power balance metrics and analytics
+- Used in onboarding, goal creation, and progress tracking
+- User-neutral and secular by design
+- Spirituality is self-defined (faith, reflection, values, meaning)
+
+**Theoretical basis:**
+The 7-domain model is grounded in multidimensional well-being research, Self-Determination Theory (autonomy, competence, relatedness), positive psychology and flourishing frameworks, health psychology and quality-of-life models, prosocial behavior research, and spirituality research in resilience and meaning-making. Balance is measured by sustained engagement across domains without chronic neglect—not equal time distribution.
+
 ### Core Progress Concepts
-- **Goal** — a meaningful outcome the user wants to achieve
-- **Path** — a flexible way toward a goal
-- **Step** — a small, concrete action (recurring or one-time)
-- **Check-in** — a fast status update for a step occurrence  
+- **Goal** — A specific, measurable milestone with defined completion criteria. Belongs to one Life Domain. May optionally belong to a Journey.
+- **Journey** — A broader, long-term developmental direction or identity-level theme. Belongs to one Life Domain. May contain multiple Goals. Optional (not required for goal tracking).
+- **Step** — A small, concrete action (recurring or one-time)
+- **Check-in** — A fast status update for a step occurrence  
   - status: done / partial / skipped  
   - optional context: difficulty (3-level), mood (3-level)
 - **Log** — optional free-text note attached to a check-in
@@ -256,6 +281,13 @@ When enabled layers include social/competitive framing, community signals must r
 
 Completion is outcome-based, not step-perfection-based.
 
+### Journey States
+- **active** — current developmental focus
+- **paused** — temporarily inactive
+- **archived** — historical reference
+
+Journeys are optional and function as organizational containers for related goals.
+
 ### Step States
 - **pending**
 - **completed**
@@ -294,12 +326,29 @@ Misses are used internally to trigger:
 ## 8. Domain Model (Entities + Relationships)
 
 ### MVP Decisions (Locked)
-- Multiple active goals, **one path per goal**
+- **7-domain life model** powers all goals, journeys, and balance metrics
+- **Goals** must have a domain; may optionally reference a Journey
+- **Journeys** are optional containers that must have a domain
+- Multiple active goals supported
 - Include **PathTemplate** (minimal) to support curated/sellable paths
 - Include **Post** (minimal, no comments), with reply behavior configurable per post type
 - Replies allowed or not **via configuration** (not hard-coded by type)
 - Introduce **MotivationalProfile** and **Focus Wall**
 - Introduce **Pods** as derived/assigned cohorts (bounded)
+
+### Life Domain Enumeration
+
+```
+enum LifeDomain {
+  BODY,
+  MIND,
+  RELATIONSHIPS,
+  WORK,
+  MONEY,
+  SERVICE,
+  SPIRITUALITY
+}
+```
 
 ### Core Entities (MVP)
 
@@ -322,10 +371,33 @@ Misses are used internally to trigger:
 
 #### Goal
 - Belongs to User
+- **domain**: LifeDomain (required)
+- **journeyId**: string (optional)
 - State: `queued | draft | active | paused | completed | abandoned | archived`
 - Intent ("why this matters now")
+- Measurable completion criteria
 - One PathInstance
 - Timestamps: created/activated/completed/etc.
+
+**Structural rules:**
+- Must have exactly one LifeDomain
+- May optionally reference a Journey
+- If referencing a Journey, both must share the same domain
+
+#### Journey
+- Belongs to User
+- **domain**: LifeDomain (required)
+- State: `active | paused | archived`
+- Title and description
+- Optional identity-level narrative
+- May contain multiple Goals (via Goal.journeyId reference)
+- Can exist without active Goals
+
+**Structural rules:**
+- Must have exactly one LifeDomain
+- Optional (not required for goal tracking)
+- Goals may exist without a Journey
+- Future AI may infer potential Journeys from clustered Goals
 
 #### PathTemplate
 - Reusable template (system/AI/curator in future)
@@ -402,9 +474,13 @@ Misses are used internally to trigger:
 
 ### Key Relationships
 - User 1—N Goals
+- User 1—N Journeys (optional)
 - User 1—1 AvailabilityProfile (versioning optional later)
 - User 1—1 MotivationalProfile
 - User 1—N Pod assignments (derived/assigned)
+- Goal N—1 Journey (optional; Goal.journeyId)
+- Goal 1—1 LifeDomain (required)
+- Journey 1—1 LifeDomain (required)
 - Goal 1—1 PathInstance
 - PathTemplate 1—(embedded steps JSON)
 - PathInstance 1—N StepInstances
@@ -439,20 +515,44 @@ Misses are used internally to trigger:
   - **active** if not overloaded and has no active goals
 - During re-engagement, system suggests adjustments that reduce load (cadence downshift, simpler steps)
 
+### Balance Metrics (Domain-Level)
+
+Balance is computed primarily at the **LifeDomain level**, independent of Journeys.
+
+**Tracked metrics:**
+- Active goals per domain
+- Domains with no active goals (neglect detection)
+- Self-reported strain per domain (optional checkpoint data)
+- Long-term inactivity per domain (time since last active goal)
+
+**Journeys:**
+- Enhance narrative structure but are **not required** for balance computation
+- May be used to group related goals within a domain for visualization
+- Future AI may suggest Journeys based on clustered goals within the same domain
+
+**Balance principle:**
+Balance does not mean equal time distribution. It means sustained engagement across domains without chronic neglect of any one area.
+
 ---
 
 ## 9. Core Events & Flows (Event-First)
 
 ### Event Catalog (MVP)
 
-#### Goal & Path
-- `goal_created` (draft)
+#### Goal, Journey & Path
+- `goal_created` (draft, includes domain)
 - `goal_queued`
 - `goal_activated`
 - `goal_paused`
 - `goal_completed`
 - `goal_abandoned` (inferred/confirmed)
 - `goal_archived`
+- `goal_journey_linked` (Goal associated with Journey)
+- `goal_journey_unlinked`
+- `journey_created` (includes domain)
+- `journey_paused`
+- `journey_activated`
+- `journey_archived`
 - `path_template_selected`
 - `path_instance_created`
 
@@ -503,14 +603,16 @@ Misses are used internally to trigger:
 
 ### Critical MVP Flows
 
-#### Flow 1 — Select Template → Create Goal (overload-aware)
-1. `path_template_selected`
-2. Create `goal_created` (draft) + `path_instance_created`
-3. Copy template `steps_json` → StepInstances (`step_added` batch)
-4. Compute overload proxy using active goals + capacity
-5. Recommend `queued` vs `active` (user confirms)
-6. `goal_queued` or `goal_activated`
-7. Optional `activity_signal_emitted`
+#### Flow 1 — Select Template → Create Goal (overload-aware, domain-required)
+1. User selects domain (required)
+2. User optionally selects or creates Journey (must match domain)
+3. `path_template_selected`
+4. Create `goal_created` (draft, with domain and optional journeyId) + `path_instance_created`
+5. Copy template `steps_json` → StepInstances (`step_added` batch)
+6. Compute overload proxy using active goals + capacity
+7. Recommend `queued` vs `active` (user confirms)
+8. `goal_queued` or `goal_activated`
+9. Optional `activity_signal_emitted`
 
 #### Flow 2 — Check-in (fast loop)
 1. User taps status (done / partial / skipped)
@@ -577,46 +679,67 @@ Misses are used internally to trigger:
 - `GET /path-templates` (list + load estimate)
 - `GET /path-templates/:id` (details + steps_json)
 
-#### 4) Goals
-- `GET /goals?state=...`
+#### 4) Journeys
+- `GET /journeys?state=...` (list user's journeys)
+- `POST /journeys` (create journey with domain)
+- `GET /journeys/:id` (detail + associated goals)
+- `PATCH /journeys/:id` (update journey)
+- `POST /journeys/:id/transition` with `{ to: "active|paused|archived" }`
+
+#### 5) Goals
+- `GET /goals?state=...&domain=...&journeyId=...` (filter by state, domain, or journey)
 - `POST /goals/from-template`
+  - requires: domain (LifeDomain)
+  - optional: journeyId
   - creates goal draft + path instance + step instances
   - returns recommended state: queued/active based on load
+- `POST /goals` (create custom goal with domain, optional journeyId)
 - `POST /goals/:id/transition` with `{ to: "queued|active|paused|completed|archived" }`
-- `GET /goals/:id` (detail + ordered steps + current focus marker)
+- `PATCH /goals/:id/journey` (link/unlink journey; validates domain match)
+- `GET /goals/:id` (detail + ordered steps + current focus marker + domain + journey reference)
 
-#### 5) Steps
+#### 6) Steps
 - `POST /goals/:goalId/steps` (user-created step)
 - `PATCH /steps/:id` (cadence, minutes estimate, order/priority, etc.)
 - `POST /steps/reorder`
 - `POST /steps/:id/retire`
 
-#### 6) Check-ins
+#### 7) Check-ins
 - `POST /checkins` (idempotency via `clientEventId`)
 - `GET /steps/:id/checkins?limit=...`
 
-#### 7) Checkpoints + Adjustments
+#### 8) Checkpoints + Adjustments
 - `POST /checkpoints`
 - `POST /adjustments`
 
-#### 8) Posts + Replies + Reactions
+#### 9) Posts + Replies + Reactions
 - `GET /posts?scope=live` (bounded, filterable)
 - `POST /posts`
 - `POST /posts/:id/replies` (allowed by config)
 - `POST /posts/:id/reactions` (idempotent)
 
-#### 9) Live Community Signals (ambient)
+#### 10) Live Community Signals (ambient)
 - `GET /activity-signals?since=timestamp` (bounded)
 
-#### 10) Pods
+#### 11) Pods
 - `GET /pods` (pods relevant to the user, derived/assigned)
 - `GET /pods/:id` (pod summary; framing depends on enabled layers)
 
-#### 11) Recommendations (load-aware + motivation-aware)
+#### 12) Balance & Analytics (domain-level)
+- `GET /balance` (active goals per domain, neglected domains, utilization per domain)
+- `GET /balance/history?period=...` (domain engagement over time)
+
+#### 13) Recommendations (load-aware + motivation-aware + domain-aware)
 - `GET /recommendations/goal-state?templateId=...` (queued vs active + explanation)
 - `GET /recommendations/layers` (suggest enable/disable + rationale)
+- `GET /recommendations/journeys` (suggest potential Journeys inferred from goal clusters; requires user confirmation)
 
 ### Implementation Notes
+- **LifeDomain** is required for all Goals and Journeys
+- **Journeys** are optional; Goals can exist without a Journey
+- **Domain validation**: If Goal references a Journey, both must share the same domain
+- **Balance metrics** computed at domain level, not dependent on Journeys
+- **Inferred Journeys**: Future AI may suggest Journeys based on goal clusters; never auto-created without user confirmation
 - **Availability** stored as minutes/day; UI may show hours when >= 1h
 - **"Missed"** is system-derived and mostly invisible; used for re-engagement
 - **Focus Wall** is user-controlled; suggestions are permitted; never forced
@@ -645,6 +768,8 @@ or implementation details.
 Availability is a **planning primitive**, not a commitment contract.
 
 Onboarding also establishes:
+- Introduction to the **7 life domains** (Body, Mind, Relationships, Work, Money, Service, Spirituality)
+- Clarification that goals must have a domain; Journeys are optional
 - Whether Focus Wall is enabled (default may be on; exact default is a product choice)
 - Initial motivational layer suggestions (optional, non-binding)
 
@@ -686,15 +811,25 @@ Focus Wall can be:
 Users can manage:
 - **Active goals** (currently worked on)
 - **Queued goals** (intended, but not yet active)
+- **Journeys** (optional long-term themes that organize goals)
 
 At MVP:
 - Multiple active goals are allowed
 - Each goal has exactly one path
+- Each goal must have exactly one Life Domain
+- Goals may optionally belong to a Journey (same domain required)
 
 Adding a goal from a PathTemplate must:
+- Require domain selection
+- Allow optional Journey selection (or creation)
 - Create the goal in a non-active state by default
 - Present an overload-aware recommendation
 - Require explicit user confirmation to activate
+
+Balance view shows:
+- Active goals grouped by domain
+- Domains with no active goals (neglect indicators)
+- Optional Journey grouping within domains
 
 ### 11.4 Goal Detail and Daily Progress
 
@@ -848,6 +983,34 @@ Human motivation is sustained when three psychological needs are met:
 Most productivity tools optimize output.
 Better You optimizes **sustainable motivation under constraint**.
 
+### 12.3a. Life Domain Model (Multidimensional Well-Being)
+
+**Primary references:** Diener, Ryff, Seligman, Pargament, Penner
+
+#### Core idea
+Well-being is multidimensional. Sustained flourishing requires engagement across physical, cognitive, relational, occupational, financial, prosocial, and existential domains. Balance is sustained engagement, not equal distribution.
+
+#### Application in Better You
+The **7-domain life model** (Body, Mind, Relationships, Work, Money, Service, Spirituality) is grounded in:
+- **Multidimensional well-being research** (Diener, Ryff) — well-being requires attention to physical, psychological, social, and existential dimensions
+- **Self-Determination Theory** (Deci & Ryan) — autonomy, competence, relatedness underpin sustained motivation
+- **Positive psychology and flourishing** (Seligman) — PERMA model (Positive emotion, Engagement, Relationships, Meaning, Accomplishment)
+- **Health psychology and quality-of-life frameworks** — physical health (Body) and cognitive vitality (Mind) are foundational
+- **Prosocial behavior research** (Penner, Batson) — contribution to others (Service) enhances meaning and relational connection
+- **Spirituality research** (Pargament, Hill) — meaning-making, values, transcendence, and existential well-being (Spirituality) support resilience and life satisfaction
+
+#### Domain properties
+- Required for all Goals and Journeys
+- Power balance metrics without requiring Journeys
+- Secular and user-neutral by design
+- Spirituality is self-defined (faith, reflection, values, transcendence)
+
+#### Balance principle
+Balance does not mean equal time across domains. It means **sustained engagement without chronic neglect** of any one area. The system detects long-term inactivity per domain and surfaces gentle prompts.
+
+#### Why it matters
+Most goal systems are domain-blind or profession-centric. Better You models **whole-life flourishing**, not just productivity optimization.
+
 ### 12.4. Cognitive Load Theory
 
 **Primary reference:** John Sweller
@@ -1000,9 +1163,16 @@ This document exists to make that intentionality explicit.
 
 ## Status
 
-**Document version:** 3.1  
+**Document version:** 4.0  
 **Last updated:** 2026-02-15  
-**Status:** Authoritative product specification (updated: Act surface, Focus Wall, Motivational Layers, Pods)
+**Status:** Authoritative product specification (updated: 7-domain life model, Goals/Journeys structure, domain-level balance)
 
 This specification defines product foundations, domain model, events, and API surface.  
 All data models, APIs, and infrastructure must align with these definitions.
+
+**Key changes in v4.0:**
+- Introduced **7-domain life model** (Body, Mind, Relationships, Work, Money, Service, Spirituality)
+- Separated **Goals** and **Journeys** as distinct entities
+- Made Journeys **optional** (not required for goal tracking)
+- Balance metrics computed at **domain level**, independent of Journeys
+- Added theoretical basis for life domain model (multidimensional well-being research)
