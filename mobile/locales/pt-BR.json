@@ -1,0 +1,85 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "done": "Concluído",
+    "error": "Erro",
+    "loading": "Carregando..."
+  },
+  "onboarding": {
+    "welcome": "Bem-vindo ao Better You",
+    "selectLanguage": "Selecione seu idioma",
+    "intro": "Alcance seus objetivos com planejamento consciente e apoio da comunidade"
+  },
+  "lifeDomains": {
+    "title": "Domínios da Vida",
+    "selectPrompt": "Selecione um domínio da vida para seu objetivo",
+    "BODY": "Corpo",
+    "MIND": "Mente",
+    "RELATIONSHIPS": "Relacionamentos",
+    "WORK": "Trabalho",
+    "MONEY": "Dinheiro",
+    "SERVICE": "Serviço",
+    "SPIRITUALITY": "Espiritualidade"
+  },
+  "availability": {
+    "title": "Disponibilidade Semanal",
+    "subtitle": "Quanto tempo você tem disponível por dia?",
+    "minutesPerDay": "minutos por dia",
+    "hoursPerDay": "horas por dia",
+    "days": {
+      "monday": "Segunda",
+      "tuesday": "Terça",
+      "wednesday": "Quarta",
+      "thursday": "Quinta",
+      "friday": "Sexta",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    }
+  },
+  "goals": {
+    "active": "Objetivos Ativos",
+    "queued": "Objetivos na Fila",
+    "completed": "Objetivos Concluídos",
+    "createGoal": "Criar Objetivo",
+    "overloadWarning": "Você está sobrecarregado. Considere colocar este objetivo na fila."
+  },
+  "checkin": {
+    "title": "Check-in",
+    "status": {
+      "done": "Concluído",
+      "partial": "Parcial",
+      "skipped": "Pulado"
+    },
+    "difficulty": {
+      "easy": "Fácil",
+      "moderate": "Moderado",
+      "hard": "Difícil"
+    },
+    "mood": {
+      "good": "Bom",
+      "neutral": "Neutro",
+      "difficult": "Difícil"
+    },
+    "addNote": "Adicionar nota (opcional)",
+    "submit": "Enviar Check-in"
+  },
+  "community": {
+    "liveActivity": "Atividade ao Vivo",
+    "boostRequest": "Pedido de Incentivo",
+    "requestBoost": "Pedir Incentivo",
+    "reply": "Responder",
+    "reactions": "Reações"
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "preferences": "Preferências",
+    "focusWall": "Muro de Foco",
+    "liveCommunity": "Comunidade ao Vivo"
+  }
+}

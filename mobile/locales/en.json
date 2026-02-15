@@ -1,0 +1,85 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "error": "Error",
+    "loading": "Loading..."
+  },
+  "onboarding": {
+    "welcome": "Welcome to Better You",
+    "selectLanguage": "Select your language",
+    "intro": "Achieve your goals with capacity-aware planning and community support"
+  },
+  "lifeDomains": {
+    "title": "Life Domains",
+    "selectPrompt": "Select a life domain for your goal",
+    "BODY": "Body",
+    "MIND": "Mind",
+    "RELATIONSHIPS": "Relationships",
+    "WORK": "Work",
+    "MONEY": "Money",
+    "SERVICE": "Service",
+    "SPIRITUALITY": "Spirituality"
+  },
+  "availability": {
+    "title": "Weekly Availability",
+    "subtitle": "How much time do you have each day?",
+    "minutesPerDay": "minutes per day",
+    "hoursPerDay": "hours per day",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "goals": {
+    "active": "Active Goals",
+    "queued": "Queued Goals",
+    "completed": "Completed Goals",
+    "createGoal": "Create Goal",
+    "overloadWarning": "You're overloaded. Consider queuing this goal."
+  },
+  "checkin": {
+    "title": "Check-in",
+    "status": {
+      "done": "Done",
+      "partial": "Partial",
+      "skipped": "Skipped"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "moderate": "Moderate",
+      "hard": "Hard"
+    },
+    "mood": {
+      "good": "Good",
+      "neutral": "Neutral",
+      "difficult": "Difficult"
+    },
+    "addNote": "Add a note (optional)",
+    "submit": "Submit Check-in"
+  },
+  "community": {
+    "liveActivity": "Live Activity",
+    "boostRequest": "Boost Request",
+    "requestBoost": "Request Boost",
+    "reply": "Reply",
+    "reactions": "Reactions"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "preferences": "Preferences",
+    "focusWall": "Focus Wall",
+    "liveCommunity": "Live Community"
+  }
+}
