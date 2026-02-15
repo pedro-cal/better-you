@@ -36,6 +36,20 @@ Better You is a **goal achievement platform** that combines capacity-aware plann
 - **For schema/API design:** Align data models and endpoints with the domain model and event catalog
 - **For onboarding collaborators:** Start with Overview, then Glossary, then drill into specific sections as needed
 
+**Document sections:**
+1. [Product Vision & Boundaries](#1-product-vision--boundaries)
+2. [Target User & Orientation](#2-target-user--orientation)
+3. [Core Job-To-Be-Done](#3-core-job-to-be-done)
+4. [Core User Loop](#4-core-user-loop)
+5. [Community Presence](#5-community-presence)
+6. [Domain Glossary](#6-domain-glossary)
+7. [State Machines & Rules](#7-state-machines--rules)
+8. [Domain Model (Entities + Relationships)](#8-domain-model-entities--relationships)
+9. [Core Events & Flows (Event-First)](#9-core-events--flows-event-first)
+10. [Minimal MVP API Surface (REST/JSON)](#10-minimal-mvp-api-surface-restjson)
+11. [MVP Definition (Screens, Responsibilities, and Soft Constraints)](#11-mvp-definition-screens-responsibilities-and-soft-constraints)
+12. [Theoretical Foundations](#12-theoretical-foundations)
+
 All technical artifacts (schema, API, architecture) must align with these foundations.  
 **This specification takes priority over conflicting documentation.**
 
