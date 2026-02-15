@@ -4,6 +4,7 @@ This roadmap outlines the phased development approach for Better You, following 
 
 Each phase delivers user value while building toward a scalable, production-ready platform.
 
+> **📖 Product Context**: See [`PRODUCT_FOUNDATIONS.md`](../PRODUCT_FOUNDATIONS.md) for product vision, domain language, and core behavioral rules.  
 > **📋 Current Progress**: See [`STATUS.md`](../STATUS.md) for real-time phase completion status and current implementation focus.
 
 ---

@@ -30,25 +30,15 @@ Better You is a **mobile-first, AI-powered personal development platform** focus
 ## 🏗️ Repository Structure
 
 ```
-better-you/                    # Root monorepo
-├── mobile/                    # React Native app (Expo SDK 53)
-│   ├── app/                  # Expo Router screens
-│   ├── src/features/         # Feature-based architecture
-│   ├── components/           # Reusable UI components
-│   └── package.json          # Mobile dependencies
-├── backend/                   # Next.js API (ready for implementation)
-├── shared/                    # Common types and utilities
-│   ├── src/types.ts          # TypeScript definitions
-│   ├── src/schemas.ts        # Zod validation schemas
-│   └── src/utils.ts          # Common utilities
-├── docs/                      # Project documentation
-│   ├── ARCHITECTURE.md       # Technical architecture
-│   └── ROADMAP.md           # Development phases
-├── .cursor/                   # IDE configuration
-│   └── PROGRESS.md           # Detailed implementation history
-├── package.json              # Workspace configuration
-└── STATUS.md                 # This file - AI agent handoff
+better-you/
+├── mobile/        # React Native app (Expo SDK 53)
+├── backend/       # Next.js API (ready for implementation)
+├── shared/        # Common types and utilities
+├── docs/          # Technical documentation
+└── STATUS.md      # This file
 ```
+
+> **📖 Details**: See [README.md](README.md) for complete repository structure.
 
 ---
 
@@ -72,27 +62,38 @@ better-you/                    # Root monorepo
 ---
 
 ### Phase 1 – MVP Core 🎯 **NEXT**
-**Goal**: Deliver core habit tracking functionality to first users  
+**Goal**: Deliver core goal & path tracking functionality to first users  
 **Timeline**: 4-6 weeks  
 **Target Users**: 10-50 beta users  
 **Success Criteria**: 7-day retention >50%, core offline functionality
 
+> **⚠️ AUTHORITATIVE SPECIFICATION**: See [`PRODUCT_FOUNDATIONS.md`](PRODUCT_FOUNDATIONS.md) sections 8-10 for complete domain model, events, and API surface. **This takes priority over all other documentation.**
+
 #### Backend Foundation
 - [ ] **Next.js API setup**: App Router with TypeScript in `/backend`
-- [ ] **Database schema**: PostgreSQL with migrations (users, habits, habit_entries)
+- [ ] **Database schema**: PostgreSQL with migrations (see PRODUCT_FOUNDATIONS.md section 8)
 - [ ] **Authentication**: Basic user registration/login (prepare for Auth0/Clerk)
-- [ ] **Habit domain models**: Use shared types from `@better-you/shared`
+- [ ] **Domain models**: Implement all entities from PRODUCT_FOUNDATIONS.md section 8
 
-#### Core APIs
-- [ ] **Habit CRUD APIs**: Create, read, update, delete habits
-- [ ] **Daily check-ins**: Complete/skip habit entries with streak calculation
-- [ ] **User progress**: Weekly/monthly statistics and analytics
-- [ ] **API validation**: Zod schemas for all endpoints
+#### Core APIs (from PRODUCT_FOUNDATIONS.md section 10)
+- [ ] **User & Availability**: GET /me, PATCH /me/preferences, GET/PUT /availability
+- [ ] **Path Templates**: GET /path-templates, GET /path-templates/:id
+- [ ] **Goals (overload-aware)**: POST /goals/from-template, POST /goals/:id/transition
+- [ ] **Steps**: POST /goals/:goalId/steps, PATCH /steps/:id, POST /steps/reorder
+- [ ] **Check-ins (fast loop)**: POST /checkins with idempotency
+- [ ] **Checkpoints & Adjustments**: POST /checkpoints, POST /adjustments
+- [ ] **Community**: GET/POST /posts, POST /posts/:id/replies, GET /activity-signals
+- [ ] **Recommendations**: GET /recommendations/goal-state (overload-aware)
 
 #### Mobile App Features
-- [ ] **Habit creation flow**: Title, frequency, difficulty, category
-- [ ] **Daily habit list**: Today's habits with check-in actions
-- [ ] **Progress visualization**: Streaks, calendar view, statistics
+- [ ] **Availability setup**: Weekly capacity input (minutes/day, displayed as hours)
+- [ ] **Path template browser**: View templates with load estimates
+- [ ] **Goal creation flow**: Select template → overload-aware recommendation → confirm state
+- [ ] **Daily step list**: Today's recurring steps with fast check-in (done/partial/skipped)
+- [ ] **Check-in flow**: Status + optional difficulty/mood (3-level) + optional log
+- [ ] **Progress visualization**: Step completion, goal progress, capacity utilization
+- [ ] **Weekly checkpoint**: 3 quick prompts with optional adjustments
+- [ ] **Community (Live)**: Ambient activity signals, boost requests, replies
 - [ ] **API integration**: Connect to backend APIs with React Query
 
 #### AI & Notifications
@@ -119,36 +120,15 @@ better-you/                    # Root monorepo
 
 ---
 
-## 🔧 Technical Stack & Architecture
+## 🔧 Technical Stack
 
-### **Mobile App** (React Native)
-- **Framework**: Expo SDK 53 + React Native 0.79.5
-- **Navigation**: Expo Router (file-based)
-- **State**: TanStack React Query + React hooks
-- **Storage**: MMKV for local persistence
-- **Types**: Shared types from `@better-you/shared`
+> **📖 Complete Tech Stack**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed tech stack, architectural principles, and design decisions.
 
-### **Backend** (Next.js - To Implement)
-- **Framework**: Next.js 15+ with App Router
-- **Database**: PostgreSQL (Vercel Postgres)
-- **Validation**: Zod schemas from shared package
-- **AI**: Vercel AI SDK for coaching
-- **Auth**: Auth0 or Clerk (future)
-
-### **Shared Package**
-- **Types**: User, Habit, HabitEntry, API responses
-- **Schemas**: Zod validation for all entities
-- **Utils**: Date handling, streak calculation, common functions
-
----
-
-## 🎯 Key Architectural Principles
-
-1. **Mobile-First**: All decisions prioritize mobile experience
-2. **Modular Monolith**: Start organized, decompose only when needed
-3. **Async-First**: External operations are non-blocking
-4. **Type Safety**: End-to-end TypeScript with runtime validation
-5. **Ship Fast, Scale Smart**: Add complexity only when usage demands it
+**Quick Overview:**
+- **Mobile**: React Native + Expo SDK 53
+- **Backend** (planned): Next.js 15+ with App Router
+- **Database** (planned): PostgreSQL
+- **Shared**: TypeScript types, Zod schemas, utilities
 
 ---
 
@@ -186,6 +166,7 @@ better-you/                    # Root monorepo
 
 ### **Documentation**
 - `README.md` - Project overview and Better You vision
+- `PRODUCT_FOUNDATIONS.md` - Product vision, domain language, and behavioral rules
 - `docs/ARCHITECTURE.md` - Technical architecture and evolution strategy
 - `docs/ROADMAP.md` - Detailed development phases
 - `STATUS.md` - This file, current state for AI agents
@@ -243,91 +224,40 @@ better-you/                    # Root monorepo
 
 ### **Essential Commands**
 ```bash
-# Development setup
-npm install                    # Install all workspace dependencies
-cd mobile && npm run dev       # Start mobile app development
-npm run typecheck             # Verify TypeScript across all packages
-npm run lint                  # Run linting across all packages
+# Development
+npm install                   # Install dependencies
+npm run mobile:dev            # Start mobile app
+npm run typecheck             # TypeScript check
+npm run lint                  # Lint all packages
 
-# Mobile app testing
+# Mobile specific
 cd mobile
-npm run android               # Test on Android emulator
-npm run ios                   # Test on iOS simulator
-npm run test                  # Run mobile app tests
-
-# Workspace management
-npm run mobile:dev            # Start mobile from root
-npm run backend:dev           # Start backend (once created)
+npm run android               # Android emulator
+npm run ios                   # iOS simulator
 ```
 
-### **Common Tasks & How to Execute**
+> **📋 Complete Commands**: See [README.md](README.md) and [mobile/README.md](mobile/README.md) for full command reference.
 
-#### **1. Create New Backend API Endpoint**
-```bash
-# 1. Create endpoint in backend/app/api/[endpoint]/route.ts
-# 2. Use shared types from @better-you/shared
-# 3. Validate with Zod schemas
-# 4. Add to mobile app with React Query hook
-```
+### **Common Development Tasks**
+- **Backend API**: Create in `backend/app/api/`, use shared types, validate with Zod
+- **Shared Types**: Edit `shared/src/types.ts` + `schemas.ts`, export from `index.ts`
+- **Mobile Feature**: Create in `mobile/src/features/`, add React Query hook, create screen
 
-#### **2. Add New Shared Type**
-```bash
-# 1. Edit shared/src/types.ts
-# 2. Add Zod schema in shared/src/schemas.ts
-# 3. Export from shared/src/index.ts
-# 4. Use in both mobile and backend
-```
+> **📖 Development Patterns**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed implementation patterns.
 
-#### **3. Add New Mobile Feature**
-```bash
-# 1. Create feature directory: mobile/src/features/[feature-name]/
-# 2. Add React Query hook: use[Feature].ts
-# 3. Create screen component: [Feature]Screen.tsx
-# 4. Add route: mobile/app/[feature-name].tsx
-```
-
-### **Critical Files to Understand**
-- `shared/src/types.ts` - All TypeScript definitions
-- `shared/src/schemas.ts` - Zod validation schemas
-- `mobile/src/state/query.ts` - React Query configuration
-- `mobile/app/_layout.tsx` - Root layout with providers
-- `.github/workflows/ci.yml` - CI/CD pipeline
-
-### **Architectural Guardrails**
-1. **Always use shared types** - Import from `@better-you/shared`
-2. **Validate all external data** - Use Zod schemas
-3. **Keep mobile offline-first** - Cache with React Query
-4. **Follow feature-based structure** - Group by business domain
-5. **Maintain type safety** - No `any` types allowed
-
-### **Phase 1 Implementation Checklist**
-- [ ] Set up Next.js in `/backend` directory
-- [ ] Create database schema (PostgreSQL)
-- [ ] Implement user authentication foundation
-- [ ] Build habit CRUD APIs with validation
-- [ ] Connect mobile app to real APIs
-- [ ] Add basic AI coaching responses
-- [ ] Implement push notifications
-- [ ] Set up background job processing
-
-### **Quality Gates**
-- All TypeScript checks must pass
-- ESLint and Prettier formatting enforced
+### **Quality Standards**
+- Use shared types from `@better-you/shared`
+- Validate all data with Zod schemas
+- Keep mobile offline-first (React Query)
+- Follow feature-based structure
+- No `any` types allowed
 - Conventional commits required
-- Mobile app must work offline
-- APIs must validate input with Zod
 
-### **When You Need Help**
-1. **Architecture decisions**: Check `docs/ARCHITECTURE.md`
-2. **Development phases**: Check `docs/ROADMAP.md`
-3. **Implementation history**: Check `.cursor/PROGRESS.md`
-4. **Current status**: This file (`STATUS.md`)
+### **Documentation Reference**
+- **Architecture & Tech**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- **Development Phases**: [docs/ROADMAP.md](docs/ROADMAP.md)
+- **Product Spec**: [PRODUCT_FOUNDATIONS.md](PRODUCT_FOUNDATIONS.md)
 
-### **Success Indicators**
-- Mobile app connects to real backend APIs
-- Users can create and track habits end-to-end
-- Offline functionality works seamlessly
-- Basic AI coaching provides contextual responses
-- 10 beta users can complete full user journey
+---
 
-**🎯 Your Next Action**: Create Next.js backend structure in `/backend` directory with TypeScript and App Router configuration.
+**🎯 Next Action**: Create Next.js backend structure in `/backend` directory with TypeScript and App Router configuration.

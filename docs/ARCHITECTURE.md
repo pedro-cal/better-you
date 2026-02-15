@@ -2,6 +2,7 @@
 
 This document outlines the technical architecture, design decisions, and evolution strategy for the Better You platform.
 
+> **📖 Product Context**: See [`PRODUCT_FOUNDATIONS.md`](../PRODUCT_FOUNDATIONS.md) for product vision, domain language, and core behavioral rules.  
 > **📋 Current Status**: See [`STATUS.md`](../STATUS.md) for current project phase, progress, and AI agent handoff information.
 
 ## Overview
@@ -160,33 +161,82 @@ graph TB
 
 ### Database Design
 
+> **⚠️ AUTHORITATIVE DOMAIN MODEL**: See [`PRODUCT_FOUNDATIONS.md`](../PRODUCT_FOUNDATIONS.md) sections 8-10 for the complete, authoritative domain model, entities, relationships, events, and API surface. This section provides implementation context only.
+
 #### Schema Strategy
 - **Schema-first**: Database migrations drive development
+- **Event-sourced mindset**: Track state transitions as events
 - **Normalized Design**: Reduce data duplication
-- **Audit Trails**: Track all changes
+- **Audit Trails**: Track all changes via Adjustment entity
 - **Soft Deletes**: Preserve data integrity
 
-#### Key Entities
-```sql
--- Users
-users (id, email, name, created_at, updated_at)
+#### Implementation Guide
 
--- Habits
-habits (id, user_id, title, description, frequency, difficulty, category, is_active, created_at, updated_at)
-
--- Habit Entries
-habit_entries (id, habit_id, date, completed, notes, mood, created_at)
-
--- AI Conversations
-ai_conversations (id, user_id, context, created_at)
-ai_messages (id, conversation_id, role, content, created_at)
-
--- User Sessions
-user_sessions (id, user_id, token, expires_at, created_at)
-
--- Background Jobs (MVP)
-background_jobs (id, type, payload, status, scheduled_at, completed_at, created_at)
+**Backend Setup Steps:**
+```bash
+# 1. Create backend directory structure:
+backend/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   ├── goals/
+│   │   ├── steps/
+│   │   ├── checkins/
+│   │   └── posts/
+│   ├── layout.tsx
+│   └── page.tsx
+├── lib/
+│   ├── db.ts         # Database connection
+│   ├── auth.ts       # Authentication helpers
+│   └── validation.ts # Zod schema validation
+├── package.json
+├── tsconfig.json
+└── next.config.js
 ```
+
+**Database Creation Workflow:**
+```bash
+# In backend/ directory:
+1. Create package.json with Next.js, TypeScript, @better-you/shared
+2. Create next.config.js with TypeScript support
+3. Create tsconfig.json extending shared types
+4. Create app/layout.tsx and app/page.tsx
+5. Create database connection in lib/db.ts
+6. Create migrations for all entities from PRODUCT_FOUNDATIONS.md section 8
+```
+
+#### Core Entities (Implementation Reference)
+
+**Progress Domain:**
+- `users` - User accounts with preferences, participation phase, points balance
+- `availability_profiles` - Weekly capacity in minutes/day (Mon-Sun)
+- `goals` - User goals with state machine (queued | draft | active | paused | completed | abandoned | archived)
+- `path_templates` - Reusable templates with embedded steps_json and minutes_per_week_estimate
+- `path_instances` - Per-goal path with adjustments/overrides
+- `step_instances` - Steps with state, type (recurring | one_time), cadence, ordering
+- `checkins` - Fast status updates (done | partial | skipped) with difficulty, mood, logText
+- `checkpoints` - Periodic reviews (weekly MVP) with 3 quick prompts
+- `adjustments` - Explicit change records for behavioral data
+
+**Community Domain:**
+- `posts` - Community artifacts (BOOST_REQUEST | PROGRESS_SHARE) with configurable reply behavior
+- `post_replies` - Replies to posts (config-driven per post type)
+- `reactions` - Emoji/like/short text on posts or replies
+- `activity_signals` - Derived, append-only ambient presence events
+
+**System Domain:**
+- `user_sessions` - Authentication tokens
+- `background_jobs` - Async task queue
+
+#### Key Design Decisions
+- **PathTemplate steps are embedded JSON** (MVP speed/flexibility)
+- **Goal state changes via explicit transitions** (event-first)
+- **Capacity & load tracked in minutes** (UI shows hours when >= 60min)
+- **Overload status computed, not stored** (derived from capacity vs load)
+- **"Missed" check-ins are system-derived** (invisible, used for re-engagement)
+- **Replies configurable per post type** (not hard-coded)
+
+See [`PRODUCT_FOUNDATIONS.md`](../PRODUCT_FOUNDATIONS.md) for complete entity definitions, relationships, and state machines.
 
 ### Background Processing (MVP)
 
@@ -212,7 +262,85 @@ background_jobs (
 
 ---
 
+## API Implementation Patterns
+
+### Core API Endpoints Implementation
+
+**Priority endpoints for MVP (see PRODUCT_FOUNDATIONS.md section 10 for complete API surface):**
+
+```typescript
+// User & Preferences
+GET    /me
+PATCH  /me/preferences
+
+// Availability (Capacity)
+GET    /availability
+PUT    /availability
+
+// Path Templates
+GET    /path-templates
+GET    /path-templates/:id
+
+// Goals (KEY: state transitions via /transition)
+GET    /goals?state=...
+POST   /goals/from-template
+POST   /goals/:id/transition  # { to: "queued|active|paused|completed|archived" }
+GET    /goals/:id
+
+// Steps
+POST   /goals/:goalId/steps
+PATCH  /steps/:id
+POST   /steps/reorder
+POST   /steps/:id/retire
+
+// Check-ins (KEY: fast loop with idempotency)
+POST   /checkins  # clientEventId for idempotency
+GET    /steps/:id/checkins
+
+// Checkpoints & Adjustments
+POST   /checkpoints
+POST   /adjustments
+
+// Community
+GET    /posts?scope=live
+POST   /posts
+POST   /posts/:id/replies  # Config-driven
+POST   /posts/:id/reactions
+
+// Live Community
+GET    /activity-signals?since=timestamp
+
+// Recommendations (overload-aware)
+GET    /recommendations/goal-state?templateId=...
+```
+
+### Implementation Notes
+
+**API Route Creation:**
+```bash
+# Create API routes in backend/app/api/:
+1. app/api/goals/route.ts (GET, POST)
+2. app/api/goals/[id]/route.ts (GET, PATCH)
+3. app/api/goals/[id]/transition/route.ts (POST)
+4. app/api/checkins/route.ts (POST with idempotency)
+5. Use Zod schemas from @better-you/shared for validation
+6. Return consistent API response format
+```
+
+**Mobile App Integration:**
+```bash
+# Update mobile app to connect to backend:
+1. Replace mock data in src/features/*/use*.ts hooks
+2. Add API base URL to mobile/.env
+3. Create React Query hooks for all endpoints
+4. Test offline functionality with React Query cache
+```
+
+---
+
 ## Data Flow
+
+> **⚠️ AUTHORITATIVE API SURFACE**: See [`PRODUCT_FOUNDATIONS.md`](../PRODUCT_FOUNDATIONS.md) section 10 for the complete, locked MVP API surface. The diagrams below illustrate implementation patterns but may reference example endpoints. Always refer to PRODUCT_FOUNDATIONS.md for actual endpoint definitions.
 
 ### Mobile App Data Flow
 
@@ -225,20 +353,20 @@ sequenceDiagram
     participant DB as Database
     
     User->>Mobile: Open app
-    Mobile->>Query: useHabits()
-    Query->>API: GET /api/habits
-    API->>DB: SELECT habits WHERE user_id = ?
-    DB-->>API: Habit records
+    Mobile->>Query: useGoals()
+    Query->>API: GET /goals?state=active
+    API->>DB: SELECT goals, paths, steps
+    DB-->>API: Goal records with steps
     API-->>Query: JSON response
     Query-->>Mobile: Cached data
-    Mobile-->>User: Display habits
+    Mobile-->>User: Display active goals
     
-    User->>Mobile: Complete habit
-    Mobile->>Query: useCompleteHabit()
-    Query->>API: POST /api/habits/:id/complete
-    API->>DB: INSERT habit_entry
+    User->>Mobile: Check-in on step
+    Mobile->>Query: useCheckIn()
+    Query->>API: POST /checkins
+    API->>DB: INSERT checkin + emit event
     DB-->>API: Success
-    API-->>Query: Updated habit
+    API-->>Query: Updated step status
     Query-->>Mobile: Optimistic update
     Mobile-->>User: Immediate feedback
 ```
@@ -253,15 +381,19 @@ sequenceDiagram
     participant LLM as OpenAI/Claude
     participant DB as Database
     
-    Mobile->>API: POST /api/ai/coaching
-    API->>DB: Get user context
-    DB-->>API: Habit history, preferences
-    API->>AI: Generate coaching message
-    AI->>LLM: Prompt with context
-    LLM-->>AI: AI response
-    AI->>DB: Store conversation
-    AI-->>API: Coaching message
-    API-->>Mobile: JSON response
+    Mobile->>API: POST /posts (BOOST_REQUEST)
+    API->>DB: Create post + points_spent event
+    DB-->>API: Post created
+    API->>DB: Emit activity_signal
+    API-->>Mobile: Post confirmation
+    
+    Note over Mobile,DB: Other users see request
+    
+    Mobile->>API: POST /posts/:id/replies
+    API->>DB: Create reply + points_earned event
+    DB-->>API: Reply created
+    API->>DB: Emit activity_signal
+    API-->>Mobile: Reply confirmation
 ```
 
 ---
