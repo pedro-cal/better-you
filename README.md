@@ -57,9 +57,8 @@ npm run mobile:dev  # Start mobile app
 ## Documentation
 
 - **[PRODUCT_FOUNDATIONS.md](PRODUCT_FOUNDATIONS.md)** - ⚠️ Authoritative product specification (domain model, events, API surface)
-- **[STATUS.md](STATUS.md)** - Current phase, next actions, and developer quick start
+- **[STATUS.md](STATUS.md)** - Current phase, roadmap, next actions, and developer quick start
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Technical architecture, tech stack, and design decisions
-- **[docs/ROADMAP.md](docs/ROADMAP.md)** - Development phases and milestones
 
 ---
 
