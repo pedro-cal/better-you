@@ -130,6 +130,12 @@ graph TB
 - **Jest + Testing Library**: Testing framework
 - **GitHub Actions**: CI/CD pipeline
 
+#### Internationalization
+- **expo-localization**: Device locale detection
+- **i18next + react-i18next**: Translation framework
+- **Supported locales**: English (en), Brazilian Portuguese (pt-BR)
+- **Translation files**: JSON-based locale files in `/mobile/locales/`
+
 ### Backend (Next.js) - Future
 
 #### Core Technologies
@@ -158,6 +164,12 @@ graph TB
 - **Async-Safe Processing**: Non-blocking AI operations
 - **Context Management**: Conversation history
 - **Designed for Extraction**: Can be moved to separate service later
+
+#### Internationalization
+- **i18next**: Node.js translation framework
+- **Supported locales**: English (en), Brazilian Portuguese (pt-BR)
+- **Accept-Language header**: Locale detection from mobile app
+- **Localized content**: API errors, email templates, AI prompts
 
 ### Database Design
 
@@ -208,7 +220,7 @@ backend/
 #### Core Entities (Implementation Reference)
 
 **Progress Domain:**
-- `users` - User accounts with preferences, participation phase, points balance
+- `users` - User accounts with preferred_locale, preferences, participation phase, points balance
 - `availability_profiles` - Weekly capacity in minutes/day (Mon-Sun)
 - `goals` - User goals with state machine (queued | draft | active | paused | completed | abandoned | archived)
 - `path_templates` - Reusable templates with embedded steps_json and minutes_per_week_estimate
@@ -229,7 +241,8 @@ backend/
 - `background_jobs` - Async task queue
 
 #### Key Design Decisions
-- **PathTemplate steps are embedded JSON** (MVP speed/flexibility)
+- **Bilingual from launch**: All strings, templates, and content support en + pt-BR
+- **PathTemplate steps are embedded JSON** (MVP speed/flexibility) with localized title/description
 - **Goal state changes via explicit transitions** (event-first)
 - **Capacity & load tracked in minutes** (UI shows hours when >= 60min)
 - **Overload status computed, not stored** (derived from capacity vs load)
@@ -335,6 +348,296 @@ GET    /recommendations/goal-state?templateId=...
 3. Create React Query hooks for all endpoints
 4. Test offline functionality with React Query cache
 ```
+
+---
+
+## Internationalization (i18n) Strategy
+
+### Overview
+
+Better You supports **English (en)** and **Brazilian Portuguese (pt-BR)** from launch. All user-facing strings, API responses, and content are bilingual.
+
+### Mobile App Implementation
+
+#### Setup
+```bash
+npm install --workspace=mobile i18next react-i18next expo-localization
+```
+
+#### Structure
+```
+mobile/
+├── locales/
+│   ├── en.json       # English translations
+│   ├── pt-BR.json    # Brazilian Portuguese translations
+│   └── index.ts      # i18n configuration
+├── src/
+│   └── lib/
+│       └── i18n.ts   # i18n initialization
+```
+
+#### Translation Files
+```json
+// mobile/locales/en.json
+{
+  "onboarding": {
+    "welcome": "Welcome to Better You",
+    "selectLanguage": "Select your language"
+  },
+  "lifeDomains": {
+    "BODY": "Body",
+    "MIND": "Mind",
+    "RELATIONSHIPS": "Relationships",
+    "WORK": "Work",
+    "MONEY": "Money",
+    "SERVICE": "Service",
+    "SPIRITUALITY": "Spirituality"
+  },
+  "checkin": {
+    "done": "Done",
+    "partial": "Partial",
+    "skipped": "Skipped"
+  }
+}
+
+// mobile/locales/pt-BR.json
+{
+  "onboarding": {
+    "welcome": "Bem-vindo ao Better You",
+    "selectLanguage": "Selecione seu idioma"
+  },
+  "lifeDomains": {
+    "BODY": "Corpo",
+    "MIND": "Mente",
+    "RELATIONSHIPS": "Relacionamentos",
+    "WORK": "Trabalho",
+    "MONEY": "Dinheiro",
+    "SERVICE": "Serviço",
+    "SPIRITUALITY": "Espiritualidade"
+  },
+  "checkin": {
+    "done": "Concluído",
+    "partial": "Parcial",
+    "skipped": "Pulado"
+  }
+}
+```
+
+#### Usage in Components
+```typescript
+import { useTranslation } from 'react-i18next';
+
+function CheckInButton() {
+  const { t } = useTranslation();
+  
+  return (
+    <Button title={t('checkin.done')} />
+  );
+}
+```
+
+#### Locale Detection & Persistence
+- **Auto-detect**: Use `expo-localization` to detect device locale
+- **User preference**: Store selected locale in user profile
+- **Fallback**: Default to English if locale not supported
+
+### Backend Implementation
+
+#### Setup
+```bash
+npm install --workspace=backend i18next i18next-fs-backend
+```
+
+#### Structure
+```
+backend/
+├── locales/
+│   ├── en.json       # English API responses
+│   ├── pt-BR.json    # Portuguese API responses
+│   └── index.ts      # i18n configuration
+├── lib/
+│   └── i18n.ts       # i18n middleware
+```
+
+#### API Response Localization
+```typescript
+// Backend middleware detects Accept-Language header
+import { NextRequest } from 'next/server';
+import i18next from 'i18next';
+
+export function getLocale(request: NextRequest): string {
+  const acceptLanguage = request.headers.get('Accept-Language');
+  // Parse and return 'en' or 'pt-BR'
+  return acceptLanguage?.startsWith('pt') ? 'pt-BR' : 'en';
+}
+
+// API route usage
+export async function POST(request: NextRequest) {
+  const locale = getLocale(request);
+  const t = await i18next.getFixedT(locale);
+  
+  return Response.json({
+    error: {
+      code: 'OVERLOAD_DETECTED',
+      message: t('errors.overload_detected')
+    }
+  });
+}
+```
+
+### Shared Package
+
+#### Localized Types
+```typescript
+// shared/src/types.ts
+export type Locale = 'en' | 'pt-BR';
+
+// Flexible type that scales to additional languages
+export type LocalizedString = Record<Locale, string>;
+
+// Validation helper
+export function validateTranslations(obj: LocalizedString): boolean {
+  const requiredLocales: Locale[] = ['en', 'pt-BR'];
+  return requiredLocales.every(locale => 
+    obj[locale] && obj[locale].trim().length > 0
+  );
+}
+
+// Helper to get localized string with fallback
+export function getLocalizedString(
+  localized: LocalizedString,
+  locale: Locale
+): string {
+  return localized[locale] || localized.en;
+}
+
+export interface LocalizedPathTemplate {
+  id: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  steps_json: Array<{
+    title: LocalizedString;
+    description: LocalizedString;
+    cadence: string;
+    minutes_estimate: number;
+  }>;
+  minutes_per_week_estimate: number;
+}
+```
+
+### Database Schema
+
+```sql
+-- Users table includes preferred locale
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  preferred_locale VARCHAR(10) DEFAULT 'en',
+  -- other fields...
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Path templates with localized content using JSONB (scalable)
+CREATE TABLE path_templates (
+  id UUID PRIMARY KEY,
+  title JSONB NOT NULL,  -- {"en": "Title", "pt-BR": "Título"}
+  description JSONB NOT NULL,  -- {"en": "Description", "pt-BR": "Descrição"}
+  steps_json JSONB NOT NULL,  -- Contains localized step titles/descriptions
+  minutes_per_week_estimate INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  -- Constraints ensure required locales are present
+  CONSTRAINT title_has_required_locales CHECK (title ? 'en' AND title ? 'pt-BR'),
+  CONSTRAINT description_has_required_locales CHECK (description ? 'en' AND description ? 'pt-BR')
+);
+
+-- Posts support user's preferred locale
+CREATE TABLE posts (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  type VARCHAR(50) NOT NULL,
+  body TEXT NOT NULL,
+  locale VARCHAR(10) NOT NULL,  -- Track post language
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Content Localization Strategy
+
+#### Static Content (MVP)
+- UI labels and buttons
+- Error messages
+- System notifications
+- Life domain names and descriptions
+- Onboarding flow text
+
+#### Dynamic Content (MVP)
+- PathTemplate titles and descriptions
+- Step instructions
+- Checkpoint prompts
+- API error messages
+
+#### User-Generated Content (Future)
+- Posts remain in user's chosen language
+- Optional auto-translation for cross-language community interaction
+- Translation powered by AI service (post-MVP)
+
+### Cultural Considerations
+
+#### Brazilian Portuguese Adaptations
+- **Formality**: Use informal "você" form, not formal "o senhor/a senhora"
+- **Tone**: Warm and encouraging, matching English tone
+- **Spirituality domain**: Culturally sensitive; inclusive of both religious and secular interpretations
+- **Time formats**: Use 24-hour format common in Brazil
+- **Date formats**: DD/MM/YYYY for pt-BR, MM/DD/YYYY for en
+- **Currency**: Display in R$ for pt-BR users when relevant
+
+#### Language Switching
+- Users can change language at any time in settings
+- Mobile app switches immediately (no reload required)
+- Backend respects Accept-Language header on all requests
+- User preference stored in profile, persisted across devices
+
+### Testing Strategy
+
+#### Translation Coverage
+- Ensure 100% translation coverage for both locales
+- Automated validation: `npm run i18n:validate` (CI/CD integrated)
+- Coverage reporting: `npm run i18n:coverage`
+- Visual regression tests for text overflow in different languages
+
+#### Locale Testing
+- Test all flows in both English and Portuguese
+- Verify date/time formatting per locale
+- Test API responses with different Accept-Language headers
+- Validate database queries return correct localized content from JSONB
+- Test JSONB constraints prevent incomplete translations
+
+### Scalability Considerations
+
+#### Adding New Languages (Post-MVP)
+The JSONB-based approach scales efficiently:
+
+1. **Update type definitions** in `shared/src/types.ts`:
+   ```typescript
+   export type Locale = 'en' | 'pt-BR' | 'es' | 'fr';
+   ```
+
+2. **Update database constraints** (one-time migration):
+   ```sql
+   ALTER TABLE path_templates DROP CONSTRAINT title_has_required_locales;
+   ALTER TABLE path_templates DROP CONSTRAINT description_has_required_locales;
+   
+   -- Add new constraint including new locales
+   ALTER TABLE path_templates
+   ADD CONSTRAINT title_has_required_locales 
+     CHECK (title ? 'en' AND title ? 'pt-BR' AND title ? 'es');
+   ```
+
+3. **Add translation files**: Create `mobile/locales/es.json`, `backend/locales/es.json`
+
+4. **Update validation scripts**: Add new locale to `LOCALES` array
+
+No code refactoring needed - the flexible type system adapts automatically.
 
 ---
 

@@ -265,6 +265,8 @@ The 7-domain model is grounded in multidimensional well-being research, Self-Det
 - Participation is reciprocal
 - Visibility without harmful comparison
 - Competition (when present) is **bounded, opt-in, and framed as information—not identity**
+- **Bilingual from launch**: All product language supports English (en) and Brazilian Portuguese (pt-BR)
+- **Culturally appropriate**: Translations respect cultural context, not literal word-for-word conversion
 
 ---
 
@@ -353,6 +355,7 @@ enum LifeDomain {
 ### Core Entities (MVP)
 
 #### User
+- **preferred_locale** ('en' | 'pt-BR')
 - Preferences (e.g., Live Community paused/resumed)
 - Participation phase marker (grace → expected)
 - Points balance (soft currency)
@@ -666,8 +669,8 @@ Balance does not mean equal time distribution. It means sustained engagement acr
 ### API Endpoints
 
 #### 1) User + Preferences
-- `GET /me`
-- `PATCH /me/preferences` (e.g., liveCommunityPaused)
+- `GET /me` (returns user with preferred_locale)
+- `PATCH /me/preferences` (e.g., liveCommunityPaused, preferred_locale)
 - `PATCH /me/motivation` (enable/disable layers, accept/reject suggestions)
 - `PATCH /me/focus-wall` (toggle Focus Wall)
 
@@ -735,6 +738,7 @@ Balance does not mean equal time distribution. It means sustained engagement acr
 - `GET /recommendations/journeys` (suggest potential Journeys inferred from goal clusters; requires user confirmation)
 
 ### Implementation Notes
+- **Internationalization**: All API responses respect `Accept-Language` header (en, pt-BR); user `preferred_locale` stored in profile
 - **LifeDomain** is required for all Goals and Journeys
 - **Journeys** are optional; Goals can exist without a Journey
 - **Domain validation**: If Goal references a Journey, both must share the same domain
@@ -756,6 +760,11 @@ This section defines the **Minimum Viable Product** in terms of
 or implementation details.
 
 ### 11.1 MVP Entry and Onboarding
+
+**Locale selection is the first step in onboarding.**
+- User selects preferred language: English (en) or Brazilian Portuguese (pt-BR)
+- Locale preference is stored in user profile
+- Can be changed at any time in settings
 
 **Availability setup is required before meaningful goal activation.**
 - Users define a weekly availability map (minutes per day)

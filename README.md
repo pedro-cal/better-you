@@ -13,6 +13,10 @@ This is a **production-grade, portfolio-level system** designed to scale from MV
 3. Provide **AI and human support** that respects user agency
 4. Enable **ambient community presence** without feeds or engagement traps
 
+### Supported Languages
+- 🇺🇸 **English (en)** - Full support
+- 🇧🇷 **Brazilian Portuguese (pt-BR)** - Full support
+
 > **📖 Complete Product Specification**: See [PRODUCT_FOUNDATIONS.md](PRODUCT_FOUNDATIONS.md) for detailed product vision, domain model, events, and API surface.
 
 ---

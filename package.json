@@ -22,7 +22,10 @@
     "mobile:test": "npm run test --workspace=mobile",
     "backend:dev": "npm run dev --workspace=backend",
     "backend:build": "npm run build --workspace=backend",
-    "backend:test": "npm run test --workspace=backend"
+    "backend:test": "npm run test --workspace=backend",
+    "i18n:validate": "node shared/scripts/validate-translations.js",
+    "i18n:coverage": "node shared/scripts/translation-coverage.js",
+    "i18n:check": "npm run i18n:validate && npm run i18n:coverage"
   },
   "keywords": [
     "react-native",

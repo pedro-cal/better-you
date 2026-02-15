@@ -63,14 +63,16 @@ better-you/
 
 ### Phase 1 – MVP Core 🎯 **NEXT**
 **Goal**: Deliver core goal & path tracking functionality to first users  
-**Timeline**: 4-6 weeks  
-**Target Users**: 10-50 beta users  
-**Success Criteria**: 7-day retention >50%, core offline functionality
+**Timeline**: 5-7 weeks (includes bilingual implementation)  
+**Target Users**: 10-50 beta users (English and Portuguese speakers)  
+**Success Criteria**: 7-day retention >50%, core offline functionality, full bilingual support  
+**i18n Impact**: +1 week for bilingual setup and translation
 
 > **⚠️ AUTHORITATIVE SPECIFICATION**: See [`PRODUCT_FOUNDATIONS.md`](PRODUCT_FOUNDATIONS.md) sections 8-10 for complete domain model, events, and API surface. **This takes priority over all other documentation.**
 
 #### Backend Foundation
 - [ ] **Next.js API setup**: App Router with TypeScript in `/backend`
+- [ ] **Internationalization**: i18next setup for API (en + pt-BR)
 - [ ] **Database schema**: PostgreSQL with migrations (see PRODUCT_FOUNDATIONS.md section 8)
 - [ ] **Authentication**: Basic user registration/login (prepare for Auth0/Clerk)
 - [ ] **Domain models**: Implement all entities from PRODUCT_FOUNDATIONS.md section 8
@@ -86,6 +88,7 @@ better-you/
 - [ ] **Recommendations**: GET /recommendations/goal-state (overload-aware)
 
 #### Mobile App Features
+- [ ] **Internationalization**: expo-localization + i18next setup (en + pt-BR)
 - [ ] **Availability setup**: Weekly capacity input (minutes/day, displayed as hours)
 - [ ] **Path template browser**: View templates with load estimates
 - [ ] **Goal creation flow**: Select template → overload-aware recommendation → confirm state
@@ -269,6 +272,7 @@ better-you/
 - `README.md` - Project overview and Better You vision
 - `PRODUCT_FOUNDATIONS.md` - Product vision, domain language, and behavioral rules
 - `docs/ARCHITECTURE.md` - Technical architecture and evolution strategy
+- `docs/I18N_IMPLEMENTATION.md` - Detailed i18n implementation guide (en + pt-BR)
 - `STATUS.md` - This file, current state and roadmap for AI agents
 
 ### **Configuration**
@@ -304,11 +308,12 @@ better-you/
 - Test critical user flows
 
 ### **Next Phase Priorities**
-1. Set up Next.js backend with proper TypeScript configuration
-2. Design database schema using shared types as reference
-3. Implement authentication foundation (prepare for managed auth)
-4. Create habit CRUD APIs with full validation
-5. Connect mobile app to real APIs (replace mock data)
+1. **Set up i18n foundation** (mobile + backend) - See I18N_IMPLEMENTATION.md
+2. Set up Next.js backend with proper TypeScript configuration
+3. Design database schema using shared types as reference (include locale fields)
+4. Implement authentication foundation (prepare for managed auth)
+5. Create bilingual CRUD APIs with full validation
+6. Connect mobile app to real APIs (replace mock data)
 
 ---
 
