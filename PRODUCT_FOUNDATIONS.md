@@ -77,6 +77,13 @@ All technical artifacts (schema, API, architecture) must align with these founda
 - Past check-ins are immutable
 - "Missed" is system-derived, mostly invisible, triggers re-engagement
 
+### Scheduling & Due Logic
+- **Weekday Anchors:** Optional `allowed_weekdays` constrains when recurring steps are "due" (e.g., Tue/Thu only)
+- **Due definition:** Step is due if `today ∈ allowed_weekdays` (if set) AND still needs occurrences this week AND not checked-in today
+- **Today Queue:** When multiple steps due, Act shows primary "Do now" + secondary "Also today" list
+- **Time budgeting:** Lives at step `minutes_estimate` + `AvailabilityProfile` minutes/day (not goal-level at MVP)
+- **Missed weekday:** Non-punitive; surfaces under "Also this week" with reschedule suggestion
+
 ### Act-first (Focus Wall)
 - **Act** is the primary entry surface
 - When **Focus Wall** is enabled:
@@ -311,6 +318,37 @@ Misses are used internally to trigger:
 - adjustment suggestions
 - boost prompts
 
+### Scheduling & Time Budgeting Rules
+
+**Time budgeting primitive (MVP):**
+- Time allocation lives at **Step `minutes_estimate`** + **AvailabilityProfile `minutes/day`**
+- A "45 min swim" is a StepInstance with `minutes_estimate=45`
+- System compares `sum(due steps today)` vs `availability[today_weekday]`
+- Goal-level time blocks are NOT a primary primitive at MVP
+- (Future: goal-level time blocks can be added as UI convenience that generates/updates step minutes + weekday anchors)
+
+**Weekday anchors:**
+- If `allowed_weekdays` is set on a recurring step, the system only considers it "due" on those days
+- If not set, system distributes occurrences across the week using availability + spacing (e.g., suggests Tue/Thu for 2x/week)
+- User can "pin" distribution by setting `allowed_weekdays`
+
+### Edge Cases (Non-Punitive)
+
+**Missed weekday-anchored step:**
+- If user misses Tue (for a Tue/Thu step), on Wed the system does NOT mark it overdue
+- System may optionally surface it under "Also this week" (not "overdue")
+- Suggest rescheduling: "Move Thu → Fri?" (if availability allows)
+- User taps "Reschedule" → creates an `Adjustment` event
+
+**Multiple misses:**
+- System offers gentle recovery paths (adjust cadence, pause goal, request boost)
+- Never punishes or shame-frames
+
+**Overload on a specific day:**
+- If sum(due steps) > availability for today, system highlights time conflict
+- Suggests deferring lower-priority steps to another day (if weekday anchors allow)
+- User confirms adjustment → `adjustment_created` event
+
 ### Focus Wall Rules
 - When Focus Wall is enabled:
   - Secondary surfaces may be locked until user records **any** check-in (done/partial/skipped)
@@ -422,6 +460,9 @@ enum LifeDomain {
 - Ordering / priority
 - Source: `template | user`
 - For recurring steps: cadence (e.g., daily / weekly / 3x week) and estimated minutes
+- **Scheduling primitives (optional):**
+  - `allowed_weekdays?: [Mon..Sun]` — constrains when recurring step is considered "due" (e.g., Tue/Thu only)
+  - `preferred_time_window?: { start: "HH:MM", end: "HH:MM" }` — optional time preference (nice-to-have, post-MVP)
 
 #### CheckIn
 - Belongs to StepInstance
@@ -564,6 +605,7 @@ Balance does not mean equal time distribution. It means sustained engagement acr
 - `step_reordered`
 - `step_retired`
 - `step_completed` (one-time only)
+- `step_rescheduled` (weekday anchors or time window adjusted)
 
 #### Check-ins
 - `checkin_recorded`
@@ -703,9 +745,10 @@ Balance does not mean equal time distribution. It means sustained engagement acr
 
 #### 6) Steps
 - `POST /goals/:goalId/steps` (user-created step)
-- `PATCH /steps/:id` (cadence, minutes estimate, order/priority, etc.)
+- `PATCH /steps/:id` (cadence, minutes estimate, order/priority, allowed_weekdays, preferred_time_window, etc.)
 - `POST /steps/reorder`
 - `POST /steps/:id/retire`
+- `POST /steps/:id/reschedule` (update allowed_weekdays or time window; creates adjustment event)
 
 #### 7) Check-ins
 - `POST /checkins` (idempotency via `clientEventId`)
@@ -801,6 +844,39 @@ Live Community presence on Act must be:
 - bounded
 - non-extractive
 - easily paused or resumed by the user
+
+#### 11.2a. Today Queue (Multiple Due Steps)
+
+When more than one step is due today, Act shows:
+
+**Primary card:** "Do now" (exactly one step)
+
+**Secondary:** "Also today" (collapsed list of other due steps)
+
+**Time math line:** `Today load: 90 min • Your available: 150 min`  
+- Uses AvailabilityProfile minutes for today's weekday
+- Sum of `minutes_estimate` for all due steps today
+
+**Primary selection rule:**
+
+Pick the due step with highest `(priority_weight / minutes)` adjusted by:
+- Goal state (`active` > `queued`)
+- Staleness (hasn't been checked-in recently)
+- User-chosen goal priority (if available)
+
+**"Due" definition:**
+
+A recurring step becomes due today if:
+- `today ∈ allowed_weekdays` (if set)
+- AND it still needs occurrences this week (for cadence like "2x/week")
+- AND it's not already checked-in for today
+
+If `allowed_weekdays` is not set, system distributes occurrences across the week using availability + spacing, but user can "pin" them via `allowed_weekdays`.
+
+**Example:**  
+Swimming 2x/week, 45min, allowed_weekdays=[Tue, Thu]  
+→ Only shows on Tue/Thu  
+→ On Monday, not due, therefore not shown on Act
 
 ### 11.2.1 Focus Wall (Optional Gate)
 
@@ -1172,12 +1248,19 @@ This document exists to make that intentionality explicit.
 
 ## Status
 
-**Document version:** 4.0  
+**Document version:** 4.1  
 **Last updated:** 2026-02-15  
-**Status:** Authoritative product specification (updated: 7-domain life model, Goals/Journeys structure, domain-level balance)
+**Status:** Authoritative product specification (updated: Act surface scheduling, weekday anchors, due logic)
 
 This specification defines product foundations, domain model, events, and API surface.  
 All data models, APIs, and infrastructure must align with these definitions.
+
+**Key changes in v4.1:**
+- Added **Weekday Anchors** scheduling primitive (`allowed_weekdays`, `preferred_time_window`)
+- Defined **"Due" logic** for recurring steps (weekday constraints + cadence + check-in status)
+- Specified **Today Queue** behavior on Act surface (primary card + "Also today" + time math)
+- Clarified **time budgeting** at step-level (not goal-level at MVP)
+- Added **non-punitive edge case handling** for missed weekday-anchored steps
 
 **Key changes in v4.0:**
 - Introduced **7-domain life model** (Body, Mind, Relationships, Work, Money, Service, Spirituality)
