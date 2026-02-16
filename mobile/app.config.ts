@@ -32,7 +32,7 @@ export default (): ExpoConfig => ({
     API_BASE_URL: process.env.API_BASE_URL ?? "http://10.0.2.2:3000",
     ENV: process.env.APP_ENV ?? "dev",
   },
-  plugins: ["expo-router", "expo-notifications"],
+  plugins: ["expo-router", "expo-notifications", "expo-font", "expo-web-browser"],
   experiments: {
     typedRoutes: true,
   },
