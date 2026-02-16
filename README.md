@@ -49,8 +49,8 @@ better-you/
 ```bash
 git clone <repository-url>
 cd better-you
-npm install
-npm run mobile:dev  # Start mobile app
+pnpm install
+pnpm mobile:dev  # Start mobile app
 ```
 
 > **📱 Mobile Development**: See [mobile/README.md](mobile/README.md) for detailed mobile setup and troubleshooting.  

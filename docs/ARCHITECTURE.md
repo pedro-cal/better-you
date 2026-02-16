@@ -361,7 +361,7 @@ Better You supports **English (en)** and **Brazilian Portuguese (pt-BR)** from l
 
 #### Setup
 ```bash
-npm install --workspace=mobile i18next react-i18next expo-localization
+pnpm add --filter mobile i18next react-i18next expo-localization
 ```
 
 #### Structure
@@ -445,7 +445,7 @@ function CheckInButton() {
 
 #### Setup
 ```bash
-npm install --workspace=backend i18next i18next-fs-backend
+pnpm add --filter backend i18next i18next-fs-backend
 ```
 
 #### Structure
@@ -601,8 +601,8 @@ CREATE TABLE posts (
 
 #### Translation Coverage
 - Ensure 100% translation coverage for both locales
-- Automated validation: `npm run i18n:validate` (CI/CD integrated)
-- Coverage reporting: `npm run i18n:coverage`
+- Automated validation: `pnpm i18n:validate` (CI/CD integrated)
+- Coverage reporting: `pnpm i18n:coverage`
 - Visual regression tests for text overflow in different languages
 
 #### Locale Testing

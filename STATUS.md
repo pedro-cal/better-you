@@ -21,7 +21,7 @@ Better You is a **mobile-first, AI-powered personal development platform** focus
    - Shared package: Locale types, LocalizedString, Life Domain translations
    - Mobile app: i18next + expo-localization configured
    - Translation files: 59 keys fully translated (100% coverage)
-   - Validation scripts: `npm run i18n:check` for translation completeness
+   - Validation scripts: `pnpm i18n:check` for translation completeness
 
 ### **Immediate Next Actions**
 1. **Set up Next.js backend** in `/backend` directory with TypeScript
@@ -348,15 +348,15 @@ better-you/
 ### **Essential Commands**
 ```bash
 # Development
-npm install                   # Install dependencies
-npm run mobile:dev            # Start mobile app
-npm run typecheck             # TypeScript check
-npm run lint                  # Lint all packages
+pnpm install                  # Install dependencies
+pnpm mobile:dev               # Start mobile app
+pnpm typecheck                # TypeScript check
+pnpm lint                     # Lint all packages
 
 # Mobile specific
 cd mobile
-npm run android               # Android emulator
-npm run ios                   # iOS simulator
+pnpm android                  # Android emulator
+pnpm ios                      # iOS simulator
 ```
 
 > **📋 Complete Commands**: See [README.md](README.md) and [mobile/README.md](mobile/README.md) for full command reference.

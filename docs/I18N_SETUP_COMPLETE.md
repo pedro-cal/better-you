@@ -50,9 +50,9 @@
 - `shared/scripts/translation-coverage.js` - Coverage reporting
 
 **npm Scripts:**
-- `npm run i18n:validate` - Check for missing translations
-- `npm run i18n:coverage` - Generate coverage report
-- `npm run i18n:check` - Run both validation and coverage
+- `pnpm i18n:validate` - Check for missing translations
+- `pnpm i18n:coverage` - Generate coverage report
+- `pnpm i18n:check` - Run both validation and coverage
 
 ---
 
@@ -104,18 +104,18 @@ function LifeDomainList() {
 
 ### TypeScript Validation
 ```bash
-npm run typecheck  # ✅ Passes
+pnpm typecheck  # ✅ Passes
 ```
 
 ### Translation Validation
 ```bash
-npm run i18n:check
+pnpm i18n:check
 # ✅ pt-BR: All translations complete (59 keys)
 # ✅ Full translation coverage achieved!
 ```
 
 ### Mobile App Testing
-1. Start the app: `npm run mobile:dev`
+1. Start the app: `pnpm mobile:dev`
 2. Device auto-detects locale (Portuguese devices → pt-BR, others → en)
 3. Language preference persists in AsyncStorage
 4. All screens render in selected language
@@ -135,7 +135,7 @@ npm run i18n:check
 **Dependencies to Install:**
 ```bash
 cd backend
-npm install i18next i18next-fs-backend accept-language-parser
+pnpm add -w i18next i18next-fs-backend accept-language-parser
 ```
 
 **Database Schema Updates:**

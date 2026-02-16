@@ -9,23 +9,23 @@
     "shared"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=mobile",
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "format": "npm run format --workspaces",
-    "typecheck": "npm run typecheck --workspaces",
-    "verify": "npm run verify --workspaces",
-    "clean": "npm run clean --workspaces && rm -rf node_modules",
-    "mobile:dev": "npm run dev --workspace=mobile",
-    "mobile:build": "npm run build --workspace=mobile",
-    "mobile:test": "npm run test --workspace=mobile",
-    "backend:dev": "npm run dev --workspace=backend",
-    "backend:build": "npm run build --workspace=backend",
-    "backend:test": "npm run test --workspace=backend",
+    "dev": "pnpm --filter mobile dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "typecheck": "pnpm -r typecheck",
+    "verify": "pnpm -r verify",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "mobile:dev": "pnpm --filter mobile dev",
+    "mobile:build": "pnpm --filter mobile build",
+    "mobile:test": "pnpm --filter mobile test",
+    "backend:dev": "pnpm --filter backend dev",
+    "backend:build": "pnpm --filter backend build",
+    "backend:test": "pnpm --filter backend test",
     "i18n:validate": "node shared/scripts/validate-translations.js",
     "i18n:coverage": "node shared/scripts/translation-coverage.js",
-    "i18n:check": "npm run i18n:validate && npm run i18n:coverage"
+    "i18n:check": "pnpm i18n:validate && pnpm i18n:coverage"
   },
   "keywords": [
     "react-native",
@@ -41,7 +41,7 @@
   "license": "MIT",
   "engines": {
     "node": ">=20.11.1",
-    "npm": ">=10.0.0"
+    "pnpm": ">=8.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.1",

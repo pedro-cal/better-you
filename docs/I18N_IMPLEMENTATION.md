@@ -125,7 +125,7 @@ export {
 
 ```bash
 cd mobile
-npm install i18next react-i18next expo-localization
+pnpm add --filter mobile i18next react-i18next expo-localization
 ```
 
 #### 2. Create Directory Structure
@@ -424,7 +424,7 @@ function CheckInScreen() {
 
 ```bash
 cd backend
-npm install i18next i18next-fs-backend accept-language-parser
+pnpm add --filter backend i18next i18next-fs-backend accept-language-parser
 ```
 
 #### 2. Create Translation Files
@@ -767,7 +767,7 @@ generateCoverage();
   "scripts": {
     "i18n:validate": "node shared/scripts/validate-translations.js",
     "i18n:coverage": "node shared/scripts/translation-coverage.js",
-    "i18n:check": "npm run i18n:validate && npm run i18n:coverage"
+    "i18n:check": "pnpm i18n:validate && pnpm i18n:coverage"
   }
 }
 ```
@@ -776,14 +776,14 @@ generateCoverage();
 
 **Install husky** (if not already present)
 ```bash
-npm install --save-dev husky
+pnpm add -D husky
 npx husky init
 ```
 
 **.husky/pre-commit**
 ```bash
 #!/bin/sh
-npm run i18n:validate
+pnpm i18n:validate
 ```
 
 ---
@@ -822,7 +822,7 @@ npm run i18n:validate
 
 1. **Add to English first** (`mobile/locales/en.json`)
 2. **Add Portuguese translation** (`mobile/locales/pt-BR.json`)
-3. **Validate translations**: `npm run i18n:validate`
+3. **Validate translations**: `pnpm i18n:validate`
 4. **Use in code**: `t('namespace.key')`
 5. **Test both locales**
 
@@ -831,7 +831,7 @@ npm run i18n:validate
 Add to GitHub Actions workflow:
 ```yaml
 - name: Validate translations
-  run: npm run i18n:check
+  run: pnpm i18n:check
 ```
 
 This ensures no missing translation keys reach production.

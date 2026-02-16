@@ -11,37 +11,37 @@ React Native mobile application for the Better You platform.
 ### Setup
 ```bash
 # From monorepo root
-npm install
+pnpm install
 cd mobile
 cp .env.example .env
 ```
 
 ### Development
 ```bash
-npm run dev          # Start Expo dev server
-npm run android      # Android emulator
-npm run ios          # iOS simulator
-npm run web          # Web browser
+pnpm dev             # Start Expo dev server
+pnpm android         # Android emulator
+pnpm ios             # iOS simulator
+pnpm web             # Web browser
 ```
 
 ## Available Scripts
 
 ```bash
 # Development
-npm run dev           # Start Expo dev server
-npm run android       # Android emulator
-npm run ios           # iOS simulator
+pnpm dev              # Start Expo dev server
+pnpm android          # Android emulator
+pnpm ios              # iOS simulator
 
 # Quality Assurance
-npm run typecheck     # TypeScript check
-npm run lint          # ESLint
-npm run format        # Prettier
-npm run test          # Jest tests
-npm run verify        # All checks
+pnpm typecheck        # TypeScript check
+pnpm lint             # ESLint
+pnpm format           # Prettier
+pnpm test             # Jest tests
+pnpm verify           # All checks
 
 # Maintenance
-npm run clean         # Clean cache
-npm run reset         # Reset Expo cache
+pnpm clean            # Clean cache
+pnpm reset            # Reset Expo cache
 ```
 
 ## Environment Configuration
@@ -58,12 +58,12 @@ Environment is validated at runtime via `src/lib/env.ts`.
 
 **Metro bundler issues:**
 ```bash
-npm run reset  # Clear Expo cache
+pnpm reset  # Clear Expo cache
 ```
 
 **TypeScript errors:**
 ```bash
-npm run typecheck
+pnpm typecheck
 ```
 
 **iOS build issues:**

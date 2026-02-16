@@ -71,4 +71,4 @@ Translation keys are located in:
 - `/mobile/locales/en.json` - English translations
 - `/mobile/locales/pt-BR.json` - Brazilian Portuguese translations
 
-Run `npm run i18n:check` from the workspace root to validate translations.
+Run `pnpm i18n:check` from the workspace root to validate translations.
