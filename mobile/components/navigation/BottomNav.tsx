@@ -1,9 +1,10 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
-type NavItem = "planning" | "metrics" | "act" | "social" | "competition";
+type NavItem = "metrics" | "goals" | "act" | "social" | "competition";
 
 interface BottomNavProps {
   activeItem?: NavItem;
@@ -17,33 +18,42 @@ export function BottomNav({ activeItem = "act", onItemPress }: BottomNavProps) {
     const isActive = activeItem === item;
 
     switch (item) {
-      case "planning":
-        return (
-          <View style={styles.iconContainer}>
-            <Ionicons name="clipboard-outline" size={24} color={iconColor} />
-          </View>
-        );
       case "metrics":
         return (
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, isActive && styles.iconContainerActive]}>
             <Ionicons name="stats-chart" size={24} color={iconColor} />
+          </View>
+        );
+      case "goals":
+        return (
+          <View style={[styles.iconContainer, isActive && styles.iconContainerActive]}>
+            <Ionicons name="calendar-outline" size={24} color={iconColor} />
           </View>
         );
       case "act":
         return (
-          <View style={[styles.quickAddButton, isActive && styles.quickAddButtonActive]}>
-            <Ionicons name="radio-button-on" size={32} color={Colors.background} />
+          <View
+            style={[
+              styles.quickAddButton,
+              isActive ? styles.quickAddButtonActive : styles.quickAddButtonInactive,
+            ]}
+          >
+            <Ionicons
+              name="radio-button-on"
+              size={32}
+              color={isActive ? Colors.background : iconColor}
+            />
           </View>
         );
       case "social":
         return (
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, isActive && styles.iconContainerActive]}>
             <Ionicons name="people" size={24} color={iconColor} />
           </View>
         );
       case "competition":
         return (
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, isActive && styles.iconContainerActive]}>
             <Ionicons name="trophy" size={24} color={iconColor} />
           </View>
         );
@@ -51,13 +61,13 @@ export function BottomNav({ activeItem = "act", onItemPress }: BottomNavProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.navItem} onPress={() => onItemPress?.("planning")}>
-        {renderIcon("planning")}
-      </TouchableOpacity>
-
+    <SafeAreaView style={styles.container} edges={["bottom"]}>
       <TouchableOpacity style={styles.navItem} onPress={() => onItemPress?.("metrics")}>
         {renderIcon("metrics")}
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.navItem} onPress={() => onItemPress?.("goals")}>
+        {renderIcon("goals")}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -74,7 +84,7 @@ export function BottomNav({ activeItem = "act", onItemPress }: BottomNavProps) {
       <TouchableOpacity style={styles.navItem} onPress={() => onItemPress?.("competition")}>
         {renderIcon("competition")}
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -88,7 +98,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 24,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
   },
@@ -105,21 +114,30 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "center",
+    borderTopWidth: 2,
+    borderTopColor: "transparent",
+  },
+  iconContainerActive: {
+    borderTopColor: Colors.primary,
   },
   quickAddButton: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.primary,
     alignItems: "center",
     justifyContent: "center",
+  },
+  quickAddButtonActive: {
+    backgroundColor: Colors.primary,
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
-  quickAddButtonActive: {
-    backgroundColor: Colors.primaryDark,
+  quickAddButtonInactive: {
+    backgroundColor: Colors.cardBackgroundLight,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });

@@ -1,5 +1,7 @@
 import React from "react";
-import { StyleSheet, ScrollView, View } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Step } from "@better-you/shared";
 import { ProgressBar, NextStepCard, QuoteCard, TodaySteps } from "@/components/home";
@@ -46,6 +48,8 @@ const mockTodaySteps: Step[] = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const handleStepAction = (action: string) => {
     console.log(`Step action: ${action}`);
     // TODO: Implement step action logic
@@ -57,12 +61,21 @@ export default function HomeScreen() {
   };
 
   const handleNavPress = (item: string) => {
-    console.log(`Nav item pressed: ${item}`);
-    // TODO: Implement navigation
+    switch (item) {
+      case "goals":
+        router.push("/(tabs)/goals");
+        break;
+      case "act":
+        // Already on act screen
+        break;
+      // TODO: Add other navigation items when screens are created
+      default:
+        console.log(`Navigation to ${item} not yet implemented`);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <ProgressBar completed={1} total={4} />
 
@@ -79,7 +92,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       <BottomNav activeItem="act" onItemPress={handleNavPress} />
-    </View>
+    </SafeAreaView>
   );
 }
 
