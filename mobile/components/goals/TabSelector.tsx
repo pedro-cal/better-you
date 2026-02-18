@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 
 interface Tab {
   id: string;
@@ -14,14 +14,25 @@ interface TabSelectorProps {
 }
 
 export function TabSelector({ tabs, activeTab, onTabChange }: TabSelectorProps) {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         return (
           <TouchableOpacity key={tab.id} style={styles.tab} onPress={() => onTabChange(tab.id)}>
-            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
-            {isActive && <View style={styles.activeIndicator} />}
+            <Text
+              style={[
+                styles.tabText,
+                { color: isActive ? colors.textPrimary : colors.textSecondary },
+              ]}
+            >
+              {tab.label}
+            </Text>
+            {isActive && (
+              <View style={[styles.activeIndicator, { backgroundColor: colors.primary }]} />
+            )}
           </TouchableOpacity>
         );
       })}
@@ -42,11 +53,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.textSecondary,
     letterSpacing: 0.5,
-  },
-  tabTextActive: {
-    color: Colors.textPrimary,
   },
   activeIndicator: {
     position: "absolute",
@@ -54,6 +61,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: Colors.primary,
   },
 });

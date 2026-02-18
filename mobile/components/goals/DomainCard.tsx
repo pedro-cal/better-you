@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { LifeDomain } from "@better-you/shared";
+import { getCardStyle, Spacing } from "@/constants/DesignTokens";
 
 interface DomainCardProps {
   domain?: LifeDomain;
@@ -21,12 +22,22 @@ export function DomainCard({
   iconName,
   isSummary = false,
 }: DomainCardProps) {
+  const { colors } = useTheme();
   const cardStyle = isSummary ? [styles.container, styles.summaryContainer] : styles.container;
-  const iconColor = Colors.textPrimary;
-  const textColor = Colors.textPrimary;
+  const iconColor = colors.textPrimary;
+  const textColor = colors.textPrimary;
 
   return (
-    <View style={cardStyle}>
+    <View
+      style={[
+        cardStyle,
+        {
+          backgroundColor: colors.cardBackground,
+          shadowColor: colors.shadowColor,
+          borderColor: colors.cardBorderHighlight,
+        },
+      ]}
+    >
       <View style={styles.header}>
         {iconName && <Ionicons name={iconName as any} size={24} color={iconColor} />}
         {isSummary && <Ionicons name="grid" size={24} color={iconColor} />}
@@ -37,18 +48,24 @@ export function DomainCard({
         <Text style={[styles.domainName, { color: textColor }]} numberOfLines={1}>
           {isSummary ? "All Goals" : domainName}
         </Text>
-        <Text style={[styles.goalsLabel, { color: Colors.textSecondary }]}>
+        <Text style={[styles.goalsLabel, { color: colors.textSecondary }]}>
           {activeGoals} {isSummary ? "Total Active" : "Active Goals"}
         </Text>
       </View>
 
-      <View style={[styles.progressBar, isSummary && styles.summaryProgressBar]}>
+      <View
+        style={[
+          styles.progressBar,
+          { backgroundColor: isSummary ? colors.primaryDark : colors.progressBackground },
+          isSummary && styles.summaryProgressBar,
+        ]}
+      >
         <View
           style={[
             styles.progressFill,
             {
               width: `${completionPercentage}%`,
-              backgroundColor: Colors.primary,
+              backgroundColor: colors.primary,
             },
           ]}
         />
@@ -59,15 +76,12 @@ export function DomainCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.cardBackground,
-    borderRadius: 16,
-    padding: 16,
-    aspectRatio: 1.25, // Reduced height (was 1:1, now 1.25:1)
+    ...getCardStyle("large"),
+    padding: Spacing.lg,
+    aspectRatio: 1.25,
     justifyContent: "space-between",
   },
-  summaryContainer: {
-    backgroundColor: Colors.cardBackground,
-  },
+  summaryContainer: {},
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -84,25 +98,19 @@ const styles = StyleSheet.create({
   domainName: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.textPrimary,
     marginBottom: 4,
   },
   goalsLabel: {
     fontSize: 11,
-    color: Colors.textSecondary,
     letterSpacing: 0.3,
   },
   progressBar: {
     height: 4,
-    backgroundColor: Colors.progressBackground,
     borderRadius: 2,
     overflow: "hidden",
   },
-  summaryProgressBar: {
-    backgroundColor: Colors.primaryDark,
-  },
+  summaryProgressBar: {},
   progressFill: {
     height: "100%",
-    backgroundColor: Colors.primary,
   },
 });

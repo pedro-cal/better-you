@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { Step } from "@better-you/shared";
 import { StepCard } from "./StepCard";
 
@@ -10,9 +10,11 @@ interface TodayStepsProps {
 }
 
 export function TodaySteps({ steps, onStepPress }: TodayStepsProps) {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>TODAY'S STEPS</Text>
+      <Text style={[styles.heading, { color: colors.textSecondary }]}>TODAY'S STEPS</Text>
       <View style={styles.stepsList}>
         {steps.map((step) => (
           <StepCard key={step.id} step={step} onPress={() => onStepPress?.(step)} />
@@ -30,7 +32,6 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 11,
     fontWeight: "700",
-    color: Colors.textSecondary,
     letterSpacing: 1,
     marginBottom: 16,
   },

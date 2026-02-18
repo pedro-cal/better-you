@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { DomainStats, AllDomainStats } from "@better-you/shared";
 import { TabSelector, WeeklyLoadCard, DomainGrid } from "@/components/goals";
 import { BottomNav } from "@/components/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const TABS = [
   { id: "goals", label: "GOALS" },
@@ -30,6 +31,7 @@ const mockAllStats: AllDomainStats = {
 
 export default function GoalsScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState("goals");
 
   const handleNavPress = (item: string) => {
@@ -47,7 +49,11 @@ export default function GoalsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={["top"]}
+    >
+      <ThemeToggle />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -55,7 +61,7 @@ export default function GoalsScreen() {
       >
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <WeeklyLoadCard percentage={65} title="Weekly Load" subtitle="Optimal capacity for mode" />
+        {/* <WeeklyLoadCard percentage={65r} title="Weekly Load" subtitle="Optimal capacity for mode" /> */}
 
         <DomainGrid domainStats={mockDomainStats} allStats={mockAllStats} />
       </ScrollView>
@@ -68,7 +74,6 @@ export default function GoalsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,

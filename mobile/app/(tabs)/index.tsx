@@ -2,10 +2,10 @@ import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { Colors } from "@/constants/Colors";
 import { Step } from "@better-you/shared";
 import { ProgressBar, NextStepCard, QuoteCard, TodaySteps } from "@/components/home";
 import { BottomNav } from "@/components/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Mock data - replace with actual data from API/state
 const mockNextStep: Step = {
@@ -99,7 +99,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,

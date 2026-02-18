@@ -181,3 +181,39 @@ export interface Streak {
   longest: number;
   lastCompletedDate?: Date;
 }
+
+// ============================================
+// Step/Task types
+// ============================================
+
+export type StepStatus = 'TODO' | 'IN_PROGRESS' | 'PARTIAL' | 'DONE' | 'SKIPPED';
+
+export interface Step {
+  id: string;
+  title: string;
+  goalTitle?: string;
+  duration?: string; // e.g., "45m", "30m"
+  progress?: number; // 0-100
+  status: StepStatus;
+  completionCount?: number; // For steps done multiple times (e.g., "DONE 17X")
+}
+
+export interface DailyProgress {
+  completed: number;
+  total: number;
+}
+
+// ============================================
+// Domain Stats types
+// ============================================
+
+export interface DomainStats {
+  domain: LifeDomain;
+  activeGoals: number;
+  completionPercentage: number;
+}
+
+export interface AllDomainStats {
+  totalActiveGoals: number;
+  overallCompletion: number;
+}

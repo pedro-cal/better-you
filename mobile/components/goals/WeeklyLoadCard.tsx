@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
+import { getCardStyle, Spacing } from "@/constants/DesignTokens";
 
 interface WeeklyLoadCardProps {
   percentage: number;
@@ -10,6 +11,7 @@ interface WeeklyLoadCardProps {
 }
 
 export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardProps) {
+  const { colors } = useTheme();
   const size = 80;
   const strokeWidth = 6;
   const radius = (size - strokeWidth) / 2;
@@ -17,7 +19,16 @@ export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardPr
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.cardBackground,
+          shadowColor: colors.shadowColor,
+          borderColor: colors.cardBorderHighlight,
+        },
+      ]}
+    >
       <View style={styles.content}>
         <View style={styles.progressCircle}>
           <Svg width={size} height={size} style={styles.svg}>
@@ -26,7 +37,7 @@ export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardPr
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={Colors.progressBackground}
+              stroke={colors.progressBackground}
               strokeWidth={strokeWidth}
               fill="none"
             />
@@ -35,7 +46,7 @@ export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardPr
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={Colors.primary}
+              stroke={colors.primary}
               strokeWidth={strokeWidth}
               fill="none"
               strokeDasharray={circumference}
@@ -46,15 +57,17 @@ export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardPr
             />
           </Svg>
           <View style={styles.progressText}>
-            <Text style={styles.percentageText}>{percentage}%</Text>
-            <Text style={styles.checklistLabel}>Load</Text>
+            <Text style={[styles.percentageText, { color: colors.textPrimary }]}>
+              {percentage}%
+            </Text>
+            <Text style={[styles.checklistLabel, { color: colors.textSecondary }]}>Load</Text>
           </View>
         </View>
 
         <View style={styles.textContent}>
-          <Text style={styles.label}>PERFORMANCE</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          <Text style={[styles.label, { color: colors.primary }]}>PERFORMANCE</Text>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
         </View>
       </View>
     </View>
@@ -63,11 +76,10 @@ export function WeeklyLoadCard({ percentage, title, subtitle }: WeeklyLoadCardPr
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.cardBackground,
-    borderRadius: 16,
-    padding: 20,
-    marginHorizontal: 24,
-    marginTop: 24,
+    ...getCardStyle("large"),
+    padding: Spacing.xl,
+    marginHorizontal: Spacing.xxl,
+    marginTop: Spacing.xxl,
   },
   content: {
     flexDirection: "row",
@@ -91,12 +103,10 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: 24,
     fontWeight: "700",
-    color: Colors.textPrimary,
   },
   checklistLabel: {
     fontSize: 8,
     fontWeight: "600",
-    color: Colors.textSecondary,
     letterSpacing: 0.5,
     marginTop: 2,
   },
@@ -106,19 +116,16 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 10,
     fontWeight: "700",
-    color: Colors.primary,
     letterSpacing: 1,
     marginBottom: 4,
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: Colors.textPrimary,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 12,
-    color: Colors.textSecondary,
     lineHeight: 16,
   },
 });

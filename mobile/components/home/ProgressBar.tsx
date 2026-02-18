@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 
 interface ProgressBarProps {
   completed: number;
@@ -10,15 +10,18 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ completed, total, avatarUrl, variant = "quiet" }: ProgressBarProps) {
+  const { colors } = useTheme();
   const percentage = total > 0 ? (completed / total) * 100 : 0;
-  const fillColor = variant === "highlight" ? Colors.progressFill : Colors.textPrimary;
+  const fillColor = variant === "highlight" ? colors.progressFill : colors.textPrimary;
 
   return (
     <View style={styles.container}>
       <View style={styles.leftSection}>
-        <Text style={styles.completedText}>{completed} DONE</Text>
+        <Text style={[styles.completedText, { color: colors.textSecondary }]}>
+          {completed} DONE
+        </Text>
         <View style={styles.progressBarContainer}>
-          <View style={styles.progressBar}>
+          <View style={[styles.progressBar, { backgroundColor: colors.progressBackground }]}>
             <View
               style={[styles.progressFill, { width: `${percentage}%`, backgroundColor: fillColor }]}
             />
@@ -27,11 +30,13 @@ export function ProgressBar({ completed, total, avatarUrl, variant = "quiet" }: 
       </View>
 
       <View style={styles.rightSection}>
-        <Text style={styles.totalText}>{total} TO DO</Text>
+        <Text style={[styles.totalText, { color: colors.textSecondary }]}>{total} TO DO</Text>
         {avatarUrl ? (
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         ) : (
-          <View style={styles.avatarPlaceholder} />
+          <View
+            style={[styles.avatarPlaceholder, { backgroundColor: colors.cardBackgroundLight }]}
+          />
         )}
       </View>
     </View>
@@ -54,7 +59,6 @@ const styles = StyleSheet.create({
   completedText: {
     fontSize: 11,
     fontWeight: "600",
-    color: Colors.textSecondary,
     letterSpacing: 0.5,
     marginBottom: 8,
   },
@@ -63,7 +67,6 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    backgroundColor: Colors.progressBackground,
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -77,7 +80,6 @@ const styles = StyleSheet.create({
   totalText: {
     fontSize: 11,
     fontWeight: "600",
-    color: Colors.textSecondary,
     letterSpacing: 0.5,
     marginBottom: 8,
   },
@@ -90,6 +92,5 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.cardBackgroundLight,
   },
 });
