@@ -1,17 +1,33 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { LifeDomain } from "@better-you/shared";
 import { getCardStyle, Spacing } from "@/constants/DesignTokens";
+import { DomainIconDef } from "./DomainGrid";
 
 interface DomainCardProps {
   domain?: LifeDomain;
   domainName?: string;
   activeGoals: number;
   completionPercentage: number;
-  iconName?: string;
+  iconDef?: DomainIconDef;
   isSummary?: boolean;
+}
+
+function DomainIcon({
+  iconDef,
+  size,
+  color,
+}: {
+  iconDef: DomainIconDef;
+  size: number;
+  color: string;
+}) {
+  if (iconDef.library === "FontAwesome5") {
+    return <FontAwesome5 name={iconDef.name as any} size={size} color={color} />;
+  }
+  return <Ionicons name={iconDef.name as any} size={size} color={color} />;
 }
 
 export function DomainCard({
@@ -19,7 +35,7 @@ export function DomainCard({
   domainName,
   activeGoals,
   completionPercentage,
-  iconName,
+  iconDef,
   isSummary = false,
 }: DomainCardProps) {
   const { colors } = useTheme();
@@ -39,7 +55,7 @@ export function DomainCard({
       ]}
     >
       <View style={styles.header}>
-        {iconName && <Ionicons name={iconName as any} size={24} color={iconColor} />}
+        {iconDef && <DomainIcon iconDef={iconDef} size={24} color={iconColor} />}
         {isSummary && <Ionicons name="grid" size={24} color={iconColor} />}
         <Text style={[styles.percentage, { color: iconColor }]}>{completionPercentage}%</Text>
       </View>

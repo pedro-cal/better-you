@@ -16,54 +16,42 @@ export function ProgressBar({ completed, total, avatarUrl, variant = "quiet" }: 
 
   return (
     <View style={styles.container}>
-      <View style={styles.leftSection}>
+      <View style={styles.labelsRow}>
         <Text style={[styles.completedText, { color: colors.textSecondary }]}>
           {completed} DONE
         </Text>
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { backgroundColor: colors.progressBackground }]}>
-            <View
-              style={[styles.progressFill, { width: `${percentage}%`, backgroundColor: fillColor }]}
-            />
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.rightSection}>
         <Text style={[styles.totalText, { color: colors.textSecondary }]}>{total} TO DO</Text>
-        {avatarUrl ? (
-          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-        ) : (
-          <View
-            style={[styles.avatarPlaceholder, { backgroundColor: colors.cardBackgroundLight }]}
-          />
-        )}
       </View>
+      <View style={[styles.progressBar, { backgroundColor: colors.progressBackground }]}>
+        <View
+          style={[styles.progressFill, { width: `${percentage}%`, backgroundColor: fillColor }]}
+        />
+      </View>
+      {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatar} /> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 24,
   },
-  leftSection: {
-    flex: 1,
-    marginRight: 16,
+  labelsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
   completedText: {
     fontSize: 11,
     fontWeight: "600",
     letterSpacing: 0.5,
-    marginBottom: 8,
   },
-  progressBarContainer: {
-    width: "100%",
+  totalText: {
+    fontSize: 11,
+    fontWeight: "600",
+    letterSpacing: 0.5,
   },
   progressBar: {
     height: 8,
@@ -74,23 +62,11 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 4,
   },
-  rightSection: {
-    alignItems: "flex-end",
-  },
-  totalText: {
-    fontSize: 11,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-  },
-  avatarPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    marginTop: 12,
+    alignSelf: "flex-end",
   },
 });

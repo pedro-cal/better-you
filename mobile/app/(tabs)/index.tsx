@@ -1,11 +1,11 @@
 import React from "react";
-import { StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Step } from "@better-you/shared";
-import { ProgressBar, NextStepCard, QuoteCard, TodaySteps } from "@/components/home";
+import { useTheme } from "@/src/contexts/ThemeContext";
+import { ProgressBar, NextStepCard, TodaySteps } from "@/components/home";
 import { BottomNav } from "@/components/navigation";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LandscapeHeader } from "@/components/LandscapeHeader";
 
 // Mock data - replace with actual data from API/state
 const mockNextStep: Step = {
@@ -49,6 +49,7 @@ const mockTodaySteps: Step[] = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
 
   const handleStepAction = (action: string) => {
     console.log(`Step action: ${action}`);
@@ -75,24 +76,27 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <LandscapeHeader
+          quote="The secret of getting ahead is getting started."
+          quoteAuthor="Mark Twain"
+        />
         <ProgressBar completed={1} total={4} />
-
         <NextStepCard
           step={mockNextStep}
           onDone={() => handleStepAction("done")}
           onPartial={() => handleStepAction("partial")}
           onSkip={() => handleStepAction("skip")}
         />
-
-        <QuoteCard quote="The secret of getting ahead is getting started." author="MARK TWAIN" />
-
         <TodaySteps steps={mockTodaySteps} onStepPress={handleStepPress} />
       </ScrollView>
-
       <BottomNav activeItem="act" onItemPress={handleNavPress} />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -102,5 +106,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 120,
   },
 });

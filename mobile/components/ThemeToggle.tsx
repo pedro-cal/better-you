@@ -6,14 +6,12 @@ export function ThemeToggle() {
   const { theme, toggleTheme, colors } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.cardBackground }]}>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>
-        {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.icon}>{theme === "dark" ? "🌙" : "☀️"}</Text>
       <Switch
         value={theme === "dark"}
         onValueChange={toggleTheme}
-        trackColor={{ false: colors.textSecondary, true: colors.primary }}
+        trackColor={{ false: "rgba(255,255,255,0.3)", true: "rgba(255,255,255,0.3)" }}
         thumbColor={colors.textPrimary}
       />
     </View>
@@ -24,16 +22,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginHorizontal: 24,
-    marginTop: 16,
-    marginBottom: 8,
-    borderRadius: 12,
+    gap: 6,
+    backgroundColor: "rgba(0,0,0,0.05)",
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 20,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
+  icon: {
+    fontSize: 16,
   },
 });

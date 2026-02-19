@@ -3,15 +3,18 @@ import { View, StyleSheet } from "react-native";
 import { DomainCard } from "./DomainCard";
 import { DomainStats, AllDomainStats, LifeDomain } from "@better-you/shared";
 
-// Icon names from Ionicons for each domain
-export const DOMAIN_ICONS: Record<LifeDomain, string> = {
-  BODY: "fitness",
-  MIND: "bulb",
-  RELATIONSHIPS: "heart",
-  WORK: "briefcase",
-  MONEY: "cash",
-  SERVICE: "hand-left",
-  SPIRITUALITY: "leaf",
+export type DomainIconDef =
+  | { library: "Ionicons"; name: string }
+  | { library: "FontAwesome5"; name: string };
+
+export const DOMAIN_ICONS: Record<LifeDomain, DomainIconDef> = {
+  BODY: { library: "Ionicons", name: "fitness" },
+  MIND: { library: "FontAwesome5", name: "brain" },
+  RELATIONSHIPS: { library: "FontAwesome5", name: "users" },
+  WORK: { library: "Ionicons", name: "briefcase" },
+  MONEY: { library: "Ionicons", name: "logo-usd" },
+  SERVICE: { library: "FontAwesome5", name: "hands-helping" },
+  SPIRITUALITY: { library: "FontAwesome5", name: "pray" },
 };
 
 const DOMAIN_NAMES: Record<LifeDomain, string> = {
@@ -50,7 +53,7 @@ export function DomainGrid({ domainStats, allStats }: DomainGridProps) {
               domainName={DOMAIN_NAMES[stat.domain]}
               activeGoals={stat.activeGoals}
               completionPercentage={stat.completionPercentage}
-              iconName={DOMAIN_ICONS[stat.domain]}
+              iconDef={DOMAIN_ICONS[stat.domain]}
             />
           </View>
         ))}

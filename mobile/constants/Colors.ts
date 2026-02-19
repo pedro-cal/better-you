@@ -49,7 +49,7 @@ export const DarkTheme: ColorScheme = {
   textSecondary: "#A9B8C8",
   textTertiary: "#7C8FA3",
 
-  // Status - Organic sage tones
+  // Status
   success: "#7FBF7F",
   partial: "#E6EEF6",
   skip: "#E6EEF6",
@@ -58,19 +58,19 @@ export const DarkTheme: ColorScheme = {
   border: "#2A3B52",
   borderLight: "#263850",
 
-  // Progress - Muted sage with cool background
+  // Progress
   progressBackground: "#2A3B52",
   progressFill: "#7FBF7F",
 
   // Shadows & Neumorphism - Soft, diffuse shadows with glass highlight
-  shadowColor: "rgba(10, 20, 35, 0.5)",
+  shadowColor: "#0A1423",
   cardBorderHighlight: "rgba(230, 238, 246, 0.08)",
 };
 
 export const LightTheme: ColorScheme = {
-  // Primary
-  primary: "#88B76A",
-  primaryDark: "#73A355",
+  // Primary - Vivid sky blue
+  primary: "#3D9BE9",
+  primaryDark: "#2B82D0",
 
   // Backgrounds
   background: "#F5F5F0",
@@ -83,7 +83,7 @@ export const LightTheme: ColorScheme = {
   textTertiary: "#8B9CA5",
 
   // Status
-  success: "#88B76A",
+  success: "#3D9BE9",
   partial: "#2D3E45",
   skip: "#2D3E45",
 
@@ -92,11 +92,11 @@ export const LightTheme: ColorScheme = {
   borderLight: "#D0D0CA",
 
   // Progress
-  progressBackground: "rgba(136, 183, 106, 0.15)",
-  progressFill: "#88B76A",
+  progressBackground: "rgba(61, 155, 233, 0.15)",
+  progressFill: "#3D9BE9",
 
   // Shadows & Neumorphism - Ultra-soft, diffuse shadows with glass highlight
-  shadowColor: "rgba(45, 62, 69, 0.08)",
+  shadowColor: "#2D3E45",
   cardBorderHighlight: "rgba(255, 255, 255, 0.85)",
 };
 

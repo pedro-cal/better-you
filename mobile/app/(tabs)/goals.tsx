@@ -1,19 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { DomainStats, AllDomainStats } from "@better-you/shared";
-import { TabSelector, WeeklyLoadCard, DomainGrid } from "@/components/goals";
+import { TabSelector, DomainGrid } from "@/components/goals";
 import { BottomNav } from "@/components/navigation";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LandscapeHeader } from "@/components/LandscapeHeader";
 
 const TABS = [
   { id: "goals", label: "GOALS" },
   { id: "journeys", label: "JOURNEYS" },
 ];
 
-// Mock data - replace with actual data from API/state
 const mockDomainStats: DomainStats[] = [
   { domain: "BODY", activeGoals: 5, completionPercentage: 75 },
   { domain: "MIND", activeGoals: 3, completionPercentage: 60 },
@@ -37,37 +35,31 @@ export default function GoalsScreen() {
   const handleNavPress = (item: string) => {
     switch (item) {
       case "goals":
-        // Already on goals screen
         break;
       case "act":
         router.push("/(tabs)");
         break;
-      // TODO: Add other navigation items when screens are created
       default:
         console.log(`Navigation to ${item} not yet implemented`);
     }
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      edges={["top"]}
-    >
-      <ThemeToggle />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        <LandscapeHeader
+          quote="The secret of getting ahead is getting started."
+          quoteAuthor="Mark Twain"
+        />
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
-
-        {/* <WeeklyLoadCard percentage={65r} title="Weekly Load" subtitle="Optimal capacity for mode" /> */}
-
         <DomainGrid domainStats={mockDomainStats} allStats={mockAllStats} />
       </ScrollView>
-
       <BottomNav activeItem="goals" onItemPress={handleNavPress} />
-    </SafeAreaView>
+    </View>
   );
 }
 
