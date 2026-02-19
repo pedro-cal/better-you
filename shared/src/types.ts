@@ -32,7 +32,7 @@ export function validateTranslations(obj: LocalizedString): boolean {
 export type LifeDomain = 
   | 'BODY'
   | 'MIND'
-  | 'RELATIONSHIPS'
+  | 'SOCIAL'
   | 'WORK'
   | 'MONEY'
   | 'SERVICE'
@@ -48,9 +48,9 @@ export const LIFE_DOMAINS_I18N: Record<LifeDomain, LocalizedString> = {
     en: 'Mind',
     'pt-BR': 'Mente'
   },
-  RELATIONSHIPS: {
-    en: 'Relationships',
-    'pt-BR': 'Relacionamentos'
+  SOCIAL: {
+    en: 'Social',
+    'pt-BR': 'Social'
   },
   WORK: {
     en: 'Work',
@@ -80,7 +80,7 @@ export const LIFE_DOMAINS_DESCRIPTIONS: Record<LifeDomain, LocalizedString> = {
     en: 'Learning, creativity, cognitive development, mental clarity, and intellectual growth',
     'pt-BR': 'Aprendizado, criatividade, desenvolvimento cognitivo, clareza mental e crescimento intelectual'
   },
-  RELATIONSHIPS: {
+  SOCIAL: {
     en: 'Family, friendships, intimate partnerships, social connection, and relational health',
     'pt-BR': 'Família, amizades, parcerias íntimas, conexão social e saúde relacional'
   },
@@ -211,9 +211,15 @@ export interface DomainStats {
   domain: LifeDomain;
   activeGoals: number;
   completionPercentage: number;
+  onTrack: number;
+  drifting: number;
+  atRisk: number;
 }
 
 export interface AllDomainStats {
   totalActiveGoals: number;
   overallCompletion: number;
+  onTrack: number;
+  drifting: number;
+  atRisk: number;
 }

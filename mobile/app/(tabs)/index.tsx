@@ -67,9 +67,10 @@ export default function HomeScreen() {
         router.push("/(tabs)/goals");
         break;
       case "act":
-        // Already on act screen
         break;
-      // TODO: Add other navigation items when screens are created
+      case "metrics":
+        router.push("/(tabs)/metrics");
+        break;
       default:
         console.log(`Navigation to ${item} not yet implemented`);
     }

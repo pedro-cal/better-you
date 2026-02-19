@@ -3,14 +3,13 @@ import { StyleSheet, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { DomainStats, AllDomainStats } from "@better-you/shared";
-import { TabSelector, DomainGrid } from "@/components/goals";
+import { DomainCard } from "@/components/goals/DomainCard";
+import { buildDomainBreakdown } from "@/components/goals/DomainGrid";
+import { TabSelector } from "@/components/goals/TabSelector";
 import { BottomNav } from "@/components/navigation";
 import { LandscapeHeader } from "@/components/LandscapeHeader";
 
-const TABS = [
-  { id: "goals", label: "GOALS" },
-  { id: "journeys", label: "JOURNEYS" },
-];
+const TABS = [{ id: "domains", label: "DOMAINS" }];
 
 const mockDomainStats: DomainStats[] = [
   { domain: "BODY", activeGoals: 5, completionPercentage: 75, onTrack: 3, drifting: 1, atRisk: 1 },
@@ -51,20 +50,18 @@ const mockAllStats: AllDomainStats = {
   atRisk: 3,
 };
 
-export default function GoalsScreen() {
+export default function MetricsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  const [activeTab, setActiveTab] = useState("goals");
+  const [activeTab, setActiveTab] = useState("domains");
 
   const handleNavPress = (item: string) => {
     switch (item) {
-      case "goals":
-        break;
       case "act":
         router.push("/(tabs)");
         break;
-      case "metrics":
-        router.push("/(tabs)/metrics");
+      case "goals":
+        router.push("/(tabs)/goals");
         break;
       default:
         console.log(`Navigation to ${item} not yet implemented`);
@@ -78,26 +75,31 @@ export default function GoalsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <LandscapeHeader
-          quote="The secret of getting ahead is getting started."
-          quoteAuthor="Mark Twain"
-        />
+        <LandscapeHeader quote="What gets measured gets managed." quoteAuthor="Peter Drucker" />
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
-        <DomainGrid domainStats={mockDomainStats} allStats={mockAllStats} />
+
+        {activeTab === "domains" && (
+          <View style={styles.content}>
+            <DomainCard
+              activeGoals={mockAllStats.totalActiveGoals}
+              completionPercentage={mockAllStats.overallCompletion}
+              onTrack={mockAllStats.onTrack}
+              drifting={mockAllStats.drifting}
+              atRisk={mockAllStats.atRisk}
+              domainBreakdown={buildDomainBreakdown(mockDomainStats)}
+              isSummary
+            />
+          </View>
+        )}
       </ScrollView>
-      <BottomNav activeItem="goals" onItemPress={handleNavPress} />
+      <BottomNav activeItem="metrics" onItemPress={handleNavPress} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 120,
-  },
+  container: { flex: 1 },
+  scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 120 },
+  content: { paddingHorizontal: 24, marginTop: 24 },
 });

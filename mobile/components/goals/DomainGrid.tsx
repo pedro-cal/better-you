@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { DomainCard } from "./DomainCard";
+import { DomainCard, DomainBreakdownItem } from "./DomainCard";
 import { DomainStats, AllDomainStats, LifeDomain } from "@better-you/shared";
 
 export type DomainIconDef =
@@ -10,7 +10,7 @@ export type DomainIconDef =
 export const DOMAIN_ICONS: Record<LifeDomain, DomainIconDef> = {
   BODY: { library: "Ionicons", name: "fitness" },
   MIND: { library: "FontAwesome5", name: "brain" },
-  RELATIONSHIPS: { library: "FontAwesome5", name: "users" },
+  SOCIAL: { library: "FontAwesome5", name: "users" },
   WORK: { library: "Ionicons", name: "briefcase" },
   MONEY: { library: "Ionicons", name: "logo-usd" },
   SERVICE: { library: "FontAwesome5", name: "hands-helping" },
@@ -20,12 +20,21 @@ export const DOMAIN_ICONS: Record<LifeDomain, DomainIconDef> = {
 const DOMAIN_NAMES: Record<LifeDomain, string> = {
   BODY: "Body",
   MIND: "Mind",
-  RELATIONSHIPS: "Relationships",
+  SOCIAL: "Social",
   WORK: "Work",
   MONEY: "Money",
   SERVICE: "Service",
   SPIRITUALITY: "Spirituality",
 };
+
+export function buildDomainBreakdown(domainStats: DomainStats[]): DomainBreakdownItem[] {
+  return domainStats.map((stat) => ({
+    domain: stat.domain,
+    iconDef: DOMAIN_ICONS[stat.domain],
+    onTrack: stat.onTrack,
+    activeGoals: stat.activeGoals,
+  }));
+}
 
 interface DomainGridProps {
   domainStats: DomainStats[];
@@ -36,15 +45,6 @@ export function DomainGrid({ domainStats, allStats }: DomainGridProps) {
   return (
     <View style={styles.container}>
       <View style={styles.grid}>
-        {/* Summary Card First */}
-        <View style={styles.cardWrapper}>
-          <DomainCard
-            activeGoals={allStats.totalActiveGoals}
-            completionPercentage={allStats.overallCompletion}
-            isSummary
-          />
-        </View>
-
         {/* Domain Cards */}
         {domainStats.map((stat) => (
           <View key={stat.domain} style={styles.cardWrapper}>
@@ -53,6 +53,9 @@ export function DomainGrid({ domainStats, allStats }: DomainGridProps) {
               domainName={DOMAIN_NAMES[stat.domain]}
               activeGoals={stat.activeGoals}
               completionPercentage={stat.completionPercentage}
+              onTrack={stat.onTrack}
+              drifting={stat.drifting}
+              atRisk={stat.atRisk}
               iconDef={DOMAIN_ICONS[stat.domain]}
             />
           </View>
@@ -74,6 +77,10 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     width: "50%",
+    padding: 6,
+  },
+  fullWidthWrapper: {
+    width: "100%",
     padding: 6,
   },
 });

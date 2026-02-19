@@ -11,6 +11,7 @@ export default function TabLayout() {
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="goals" />
+      <Tabs.Screen name="metrics" />
     </Tabs>
   );
 }
