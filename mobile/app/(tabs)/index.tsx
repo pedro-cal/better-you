@@ -1,51 +1,11 @@
 import React from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Step } from "@better-you/shared";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { ProgressBar, NextStepCard, TodaySteps } from "@/components/home";
 import { BottomNav } from "@/components/navigation";
 import { LandscapeHeader } from "@/components/LandscapeHeader";
-
-// Mock data - replace with actual data from API/state
-const mockNextStep: Step = {
-  id: "1",
-  title: "45m Study for certification",
-  goalTitle: "Certification Prep",
-  duration: "4/30",
-  progress: 13,
-  status: "IN_PROGRESS",
-};
-
-const mockTodaySteps: Step[] = [
-  {
-    id: "2",
-    title: "30m read latest book",
-    status: "IN_PROGRESS",
-    progress: 45,
-  },
-  {
-    id: "3",
-    title: "30m ride the bike",
-    status: "DONE",
-    completionCount: 17,
-  },
-  {
-    id: "4",
-    title: "15m Meditation",
-    status: "TODO",
-  },
-  {
-    id: "5",
-    title: "Review Weekly Goals",
-    status: "TODO",
-  },
-  {
-    id: "6",
-    title: "Prep Meals for Tmrw",
-    status: "TODO",
-  },
-];
+import { mockNextStep, mockTodaySteps, mockDailyProgress, mockQuotes } from "@/data/mockData";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -56,7 +16,7 @@ export default function HomeScreen() {
     // TODO: Implement step action logic
   };
 
-  const handleStepPress = (step: Step) => {
+  const handleStepPress = (step: { title: string }) => {
     console.log(`Step pressed: ${step.title}`);
     // TODO: Navigate to step detail
   };
@@ -83,11 +43,8 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <LandscapeHeader
-          quote="The secret of getting ahead is getting started."
-          quoteAuthor="Mark Twain"
-        />
-        <ProgressBar completed={1} total={4} />
+        <LandscapeHeader quote={mockQuotes.home.quote} quoteAuthor={mockQuotes.home.author} />
+        <ProgressBar completed={mockDailyProgress.completed} total={mockDailyProgress.total} />
         <NextStepCard
           step={mockNextStep}
           onDone={() => handleStepAction("done")}

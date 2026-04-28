@@ -3,6 +3,7 @@ import { View, Image, Text, StyleSheet, useWindowDimensions } from "react-native
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Typography } from "@/constants/DesignTokens";
 
 const landscapeDay = require("@/assets/images/landscapes/landscape-beach-day.png");
 const landscapeNight = require("@/assets/images/landscapes/landscape-beach-night.png");
@@ -64,15 +65,14 @@ const styles = StyleSheet.create({
     right: 60,
   },
   quoteText: {
-    fontSize: 13,
+    ...Typography.body2,
     fontStyle: "italic",
     lineHeight: 19,
-    fontWeight: "500",
   },
   quoteAuthor: {
-    fontSize: 11,
-    marginTop: 4,
+    ...Typography.body3,
     letterSpacing: 0.5,
+    marginTop: 4,
     textTransform: "uppercase",
   },
   toggleWrapper: {

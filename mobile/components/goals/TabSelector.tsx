@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@/src/contexts/ThemeContext";
+import { Typography } from "@/constants/DesignTokens";
 
 interface Tab {
   id: string;
@@ -51,8 +52,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   tabText: {
-    fontSize: 14,
-    fontWeight: "600",
+    ...Typography.body1,
     letterSpacing: 0.5,
   },
   activeIndicator: {

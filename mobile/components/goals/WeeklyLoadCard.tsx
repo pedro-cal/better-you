@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { getCardStyle, Spacing } from "@/constants/DesignTokens";
+import { getCardStyle, Spacing, Typography } from "@/constants/DesignTokens";
 
 interface WeeklyLoadCardProps {
   percentage: number;
@@ -101,12 +101,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   percentageText: {
-    fontSize: 24,
-    fontWeight: "700",
+    ...Typography.title1,
   },
   checklistLabel: {
-    fontSize: 8,
-    fontWeight: "600",
+    ...Typography.body3,
     letterSpacing: 0.5,
     marginTop: 2,
   },
@@ -114,18 +112,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontSize: 10,
-    fontWeight: "700",
+    ...Typography.body3,
     letterSpacing: 1,
     marginBottom: 4,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
+    ...Typography.title2,
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 12,
-    lineHeight: 16,
+    ...Typography.body2,
   },
 });

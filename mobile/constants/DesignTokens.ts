@@ -6,7 +6,7 @@
 //    - OR shake device → "Reload"
 //    - OR Ctrl+M (Android) / Cmd+D (iOS) → "Reload"
 
-import { ViewStyle } from "react-native";
+import { ViewStyle, TextStyle } from "react-native";
 
 // ═══════════════════════════════════════════════════════════════
 // 🎨 CARD SHADOWS & ELEVATION
@@ -52,6 +52,19 @@ export const CardBorder = {
     medium: 12, // Step cards
     small: 8, // Buttons, chips
   },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 🔤 TYPOGRAPHY SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+export const Typography = {
+  title1: { fontSize: 26, fontWeight: "700" } as TextStyle,
+  title2: { fontSize: 20, fontWeight: "600" } as TextStyle,
+  title3: { fontSize: 17, fontWeight: "700" } as TextStyle,
+  body1: { fontSize: 16, fontWeight: "600" } as TextStyle,
+  body2: { fontSize: 14, fontWeight: "500", lineHeight: 20 } as TextStyle,
+  body3: { fontSize: 12, fontWeight: "600", letterSpacing: 0.8 } as TextStyle,
 };
 
 // ═══════════════════════════════════════════════════════════════

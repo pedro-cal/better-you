@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { LifeDomain } from "@better-you/shared";
-import { getCardStyle, Spacing } from "@/constants/DesignTokens";
+import { getCardStyle, Spacing, Typography } from "@/constants/DesignTokens";
 import { DomainIconDef } from "./DomainGrid";
 
 export interface DomainBreakdownItem {
@@ -168,9 +168,7 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {},
   sectionTitle: {
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.8,
+    ...Typography.body3,
     textTransform: "uppercase",
     marginBottom: 8,
     marginLeft: 2,
@@ -182,8 +180,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   domainName: {
-    fontSize: 14,
-    fontWeight: "600",
+    ...Typography.body1,
     flexShrink: 1,
   },
   // Summary breakdown
@@ -202,11 +199,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   breakdownLabel: {
-    fontSize: 13,
+    ...Typography.body2,
     width: 80,
   },
   breakdownScore: {
-    fontSize: 12,
+    ...Typography.body2,
     fontWeight: "600",
     width: 28,
     textAlign: "right",
@@ -234,12 +231,11 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   statLabel: {
-    fontSize: 11,
+    ...Typography.body3,
     flex: 1,
   },
   statValue: {
-    fontSize: 11,
-    fontWeight: "600",
+    ...Typography.body3,
   },
   // Shared progress row
   progressRow: {
@@ -257,8 +253,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   percentage: {
-    fontSize: 11,
-    fontWeight: "600",
+    ...Typography.body3,
     minWidth: 30,
     textAlign: "right",
   },
