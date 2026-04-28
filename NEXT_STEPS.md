@@ -41,7 +41,7 @@
 
 ---
 
-## B3 — Auth Endpoints `[ ]`
+## B3 — Auth Endpoints `[x]`
 **Prerequisites**: B2 `[x]`  
 **Scope**: JWT auth designed to be replaced by Auth0/Clerk later.
 
