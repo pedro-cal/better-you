@@ -55,7 +55,7 @@
 
 ---
 
-## B4 — Goals & Steps CRUD `[ ]`
+## B4 — Goals & Steps CRUD `[x]`
 **Prerequisites**: B3 `[x]`  
 **Scope**: Core APIs. Rules in `PRODUCT_FOUNDATIONS.md §7` (state machine) and `§Quick Reference`.
 
