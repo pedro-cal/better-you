@@ -7,6 +7,7 @@ import {
   date,
   uuid,
   jsonb,
+  unique,
 } from 'drizzle-orm/pg-core';
 import type { LifeDomain } from '@better-you/shared';
 
@@ -141,7 +142,7 @@ export const checkins = pgTable('checkins', {
   mood: integer('mood'),
   logText: text('log_text'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+}, (t) => [unique('checkins_step_date_uniq').on(t.stepId, t.date)]);
 
 // ─── Checkpoints ──────────────────────────────────────────────────────────────
 
@@ -156,5 +157,19 @@ export const checkpoints = pgTable('checkpoints', {
   response1: text('response_1'),
   response2: text('response_2'),
   response3: text('response_3'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// ─── Adjustments ──────────────────────────────────────────────────────────────
+
+export const adjustments = pgTable('adjustments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stepId: uuid('step_id')
+    .notNull()
+    .references(() => steps.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  reason: text('reason'),
+  before: jsonb('before'),
+  after: jsonb('after').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

@@ -65,7 +65,7 @@
 
 ---
 
-## B5 — Check-ins & Checkpoints `[ ]`
+## B5 — Check-ins & Checkpoints `[x]`
 **Prerequisites**: B4 `[x]`  
 **Scope**: Daily loop and weekly reflection. Rules in `PRODUCT_FOUNDATIONS.md §Quick Reference`.
 
