@@ -75,7 +75,7 @@
 
 ---
 
-## B6 — Path Templates `[ ]`
+## B6 — Path Templates `[x]`
 **Prerequisites**: B2 `[x]`  *(can run parallel to B3–B5)*  
 **Scope**: Read-only template catalog.
 
