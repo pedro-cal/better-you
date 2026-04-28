@@ -29,7 +29,7 @@
 
 ---
 
-## B2 — Database Schema & Migrations `[ ]`
+## B2 — Database Schema & Migrations `[x]`
 **Prerequisites**: B1 `[x]`  
 **Scope**: PostgreSQL schema using entities from `PRODUCT_FOUNDATIONS.md §8`.
 
