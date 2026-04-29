@@ -130,7 +130,7 @@
 
 ---
 
-## F2 — Goals Screen (Real Data) `[ ]`
+## F2 — Goals Screen (Real Data) `[x]`
 **Prerequisites**: F1 `[x]`, B4 `[x]`  
 **Scope**: Remove mock imports from `mobile/app/(tabs)/goals.tsx`.
 
@@ -138,6 +138,16 @@
 - `mobile/src/features/goals/useMutateGoal.ts` — create/transition mutations
 - Wire the "GOALS" / "JOURNEYS" tab selector to actually filter content
 - Fix `BottomNav` `case "act"` on Goals tab (currently a no-op `break`)
+
+### F2.1 — Goal Creation Screens (Custom Goal Flow) `[ ]`
+**Scope**: Two-stage flow — define goal then add steps. Feels like one continuous action.
+
+- `mobile/app/goals/new-custom.tsx` — Stage 1: domain carousel + title + intent + completion criteria + journey link + overload strip; CTA "Next: Add Steps →"
+- `mobile/app/goals/new-custom-steps.tsx` — Stage 2: goal recap chip + step builder (name + duration chips + frequency chips) + "Create Goal" CTA; escape hatch to skip steps
+- Shared two-step progress pill component ("1 · Define" / "2 · Add Steps") used across both screens
+- Domain carousel: horizontally scrollable, snap-to-center, peeking next card as affordance
+- Overload strip shown in both stages, updated in Stage 2 as steps are added
+- On submit: `POST /api/goals` → then batch `POST /api/goals/:id/steps` for each defined step
 
 ---
 

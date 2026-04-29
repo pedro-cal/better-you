@@ -7,9 +7,13 @@ import { GoalCard } from "./GoalCard";
 
 interface ActiveGoalsSectionProps {
   goals: Goal[];
+  sectionTitle?: string;
 }
 
-export function ActiveGoalsSection({ goals }: ActiveGoalsSectionProps) {
+export function ActiveGoalsSection({
+  goals,
+  sectionTitle = "Active Goals",
+}: ActiveGoalsSectionProps) {
   const { colors } = useTheme();
 
   return (
@@ -17,7 +21,7 @@ export function ActiveGoalsSection({ goals }: ActiveGoalsSectionProps) {
       <View style={styles.sectionHeader}>
         <View style={styles.titleRow}>
           <View style={[styles.dot, { backgroundColor: colors.primary }]} />
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Active Goals</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{sectionTitle}</Text>
         </View>
         <Text style={[styles.count, { color: colors.textTertiary }]}>
           {goals.length} IN PROGRESS
