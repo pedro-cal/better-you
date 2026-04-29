@@ -85,7 +85,38 @@
 
 ---
 
-## F1 — API Client & Auth (Mobile) `[ ]`
+## S1 — Hosting & Database Setup `[x]`
+**Prerequisites**: B1 `[x]`  
+**Scope**: Cloud infrastructure for backend and database.
+
+### Vercel (Backend Hosting)
+- Created free Vercel account at vercel.com
+- Installed Vercel CLI: `npm i -g vercel`
+- Linked `backend/` to a new Vercel project: `cd backend && vercel link`
+  - Root directory: `./` (already inside `backend/`)
+
+### Neon (PostgreSQL via Vercel Integration)
+- Provisioned Neon Postgres from the Vercel dashboard:
+  - Project → Storage → Create → Neon Postgres
+  - Region: São Paulo, Brazil (East) — closest to target users
+  - Auth: disabled (project uses its own JWT auth)
+- Vercel auto-injects `DATABASE_URL` and `POSTGRES_*` env vars into the project
+
+### Local Setup
+- Pulled env vars locally: `cd backend && vercel env pull .env`
+  - `.env` is git-ignored — never commit it
+- Applied migrations to Neon: `pnpm db:migrate`
+- Seeded initial data: `pnpm db:seed`
+
+### Deployment Notes
+- Backend deploy: `cd backend && vercel --prod` (or push to main with Vercel GitHub integration)
+- Mobile `API_BASE_URL` defaults to `http://10.0.2.2:3000` (Android emulator)
+  - Override for physical device: `API_BASE_URL=http://<LAN_IP>:3000 pnpm start`
+  - For production: set `API_BASE_URL` to the Vercel deployment URL
+
+---
+
+## F1 — API Client & Auth (Mobile) `[~]`
 **Prerequisites**: B3 `[x]`  
 **Scope**: Replace mocks with real API calls; add auth gate.
 
