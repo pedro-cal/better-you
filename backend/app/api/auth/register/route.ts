@@ -28,11 +28,15 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hash(password, 12);
-  const [user] = await db
-    .insert(users)
-    .values({ email, name, passwordHash })
-    .returning({ id: users.id, email: users.email, name: users.name });
 
-  const token = signJwt(user.id);
-  return NextResponse.json({ data: { token, user } }, { status: 201 });
+  const result = await db.transaction(async (tx) => {
+    const [user] = await tx
+      .insert(users)
+      .values({ email, name, passwordHash })
+      .returning({ id: users.id, email: users.email, name: users.name });
+
+    return { token: signJwt(user.id), user };
+  });
+
+  return NextResponse.json({ data: result }, { status: 201 });
 }

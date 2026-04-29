@@ -116,7 +116,7 @@
 
 ---
 
-## F1 — API Client & Auth (Mobile) `[~]`
+## F1 — API Client & Auth (Mobile) `[x]`
 **Prerequisites**: B3 `[x]`  
 **Scope**: Replace mocks with real API calls; add auth gate.
 
@@ -125,6 +125,8 @@
 - `mobile/src/features/auth/useAuth.ts` — login/register React Query hooks
 - `mobile/app/auth/login.tsx`, `mobile/app/auth/register.tsx`
 - Gate `(tabs)` layout behind auth in `mobile/app/_layout.tsx`
+- Drawer menu (`mobile/components/navigation/Drawer.tsx`) with logout, accessible from all tabs via floating hamburger button in `(tabs)/_layout.tsx`
+- Token storage uses AsyncStorage (MMKV deferred to native dev build)
 
 ---
 

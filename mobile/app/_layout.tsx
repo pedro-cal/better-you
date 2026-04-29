@@ -5,7 +5,7 @@ import {
   ThemeProvider as NavThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, usePathname, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { queryClient } from "@/src/state/query";
 import { initI18n } from "@/src/lib/i18n";
 import { ThemeProvider } from "@/src/contexts/ThemeContext";
+import { AuthProvider, useAuth } from "@/src/features/auth/useAuth";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -55,21 +56,39 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { token, isLoadingToken } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoadingToken) return;
+    const inAuthGroup = pathname.startsWith("/auth");
+    if (!token && !inAuthGroup) {
+      router.replace("/auth/login");
+    } else if (token && inAuthGroup) {
+      router.replace("/(tabs)");
+    }
+  }, [token, isLoadingToken, pathname]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <NavThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </NavThemeProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <NavThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="auth" />
+        </Stack>
+      </NavThemeProvider>
+    </ThemeProvider>
   );
 }
