@@ -8,23 +8,28 @@ import { GoalCard } from "./GoalCard";
 interface ActiveGoalsSectionProps {
   goals: Goal[];
   sectionTitle?: string;
+  countLabel?: string;
+  dotColor?: string;
 }
 
 export function ActiveGoalsSection({
   goals,
   sectionTitle = "Active Goals",
+  countLabel = "IN PROGRESS",
+  dotColor,
 }: ActiveGoalsSectionProps) {
   const { colors } = useTheme();
+  const resolvedDot = dotColor ?? colors.primary;
 
   return (
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <View style={styles.titleRow}>
-          <View style={[styles.dot, { backgroundColor: colors.primary }]} />
+          <View style={[styles.dot, { backgroundColor: resolvedDot }]} />
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{sectionTitle}</Text>
         </View>
         <Text style={[styles.count, { color: colors.textTertiary }]}>
-          {goals.length} IN PROGRESS
+          {goals.length} {countLabel}
         </Text>
       </View>
 

@@ -49,12 +49,13 @@ export default function GoalEditScreen() {
   const [goal, setGoal] = useState<ApiGoal | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [title, setTitle] = useState("");
   const [intent, setIntent] = useState("");
   const [completionCriteria, setCompletionCriteria] = useState("");
+  const [selectedState, setSelectedState] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -64,6 +65,7 @@ export default function GoalEditScreen() {
         setTitle(r.data.title);
         setIntent(r.data.intent ?? "");
         setCompletionCriteria(r.data.completionCriteria ?? "");
+        setSelectedState(r.data.state);
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -72,22 +74,42 @@ export default function GoalEditScreen() {
   const isDirty =
     title.trim() !== (goal?.title ?? "") ||
     intent.trim() !== (goal?.intent ?? "") ||
-    completionCriteria.trim() !== (goal?.completionCriteria ?? "");
+    completionCriteria.trim() !== (goal?.completionCriteria ?? "") ||
+    selectedState !== (goal?.state ?? "");
 
   const handleSave = async () => {
     if (!goal || !isDirty) return;
     setSaving(true);
     setError(null);
     try {
-      const { data: updated } = await apiFetch<ApiGoal>(`/api/goals/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          title: title.trim(),
-          intent: intent.trim() || null,
-          completionCriteria: completionCriteria.trim() || null,
-        }),
-      });
-      setGoal(updated);
+      let updated: ApiGoal | undefined;
+
+      if (selectedState !== goal.state) {
+        const { data } = await apiFetch<ApiGoal>(`/api/goals/${id}/transition`, {
+          method: "POST",
+          body: JSON.stringify({ to: selectedState }),
+        });
+        updated = data;
+      }
+
+      const textDirty =
+        title.trim() !== goal.title ||
+        intent.trim() !== (goal.intent ?? "") ||
+        completionCriteria.trim() !== (goal.completionCriteria ?? "");
+
+      if (textDirty) {
+        const { data } = await apiFetch<ApiGoal>(`/api/goals/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            title: title.trim(),
+            intent: intent.trim() || null,
+            completionCriteria: completionCriteria.trim() || null,
+          }),
+        });
+        updated = data;
+      }
+
+      if (updated) setGoal(updated);
       await queryClient.invalidateQueries({ queryKey: ["goals"] });
       router.back();
     } catch (e) {
@@ -97,23 +119,9 @@ export default function GoalEditScreen() {
     }
   };
 
-  const handleTransition = async (to: string) => {
-    if (!goal) return;
-    setTransitioning(true);
-    setError(null);
-    try {
-      const { data: updated } = await apiFetch<ApiGoal>(`/api/goals/${id}/transition`, {
-        method: "POST",
-        body: JSON.stringify({ to }),
-      });
-      setGoal(updated);
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Transition failed");
-    } finally {
-      setTransitioning(false);
-    }
-  };
+  const stateOptions = [goal?.state ?? "", ...(VALID_TRANSITIONS[goal?.state ?? ""] ?? [])].filter(
+    (v, i, arr) => arr.indexOf(v) === i,
+  );
 
   const s = styles(colors);
 
@@ -132,8 +140,6 @@ export default function GoalEditScreen() {
       </View>
     );
   }
-
-  const availableTransitions = VALID_TRANSITIONS[goal.state] ?? [];
 
   return (
     <KeyboardAvoidingView
@@ -157,18 +163,60 @@ export default function GoalEditScreen() {
         contentContainerStyle={s.scroll}
         keyboardShouldPersistTaps="handled"
       >
-        {/* State row */}
-        <View style={s.stateRow}>
+        {/* Status dropdown */}
+        <View style={s.statusSection}>
           <Text style={[s.stateLabel, { color: colors.textTertiary }]}>Status</Text>
-          <View
-            style={[
-              s.stateBadge,
-              { backgroundColor: `${colors.primary}18`, borderColor: `${colors.primary}33` },
-            ]}
-          >
-            <Text style={[s.stateBadgeText, { color: colors.primary }]}>
-              {STATE_LABELS[goal.state] ?? goal.state}
-            </Text>
+          <View>
+            <TouchableOpacity
+              onPress={() => setDropdownOpen((o) => !o)}
+              style={[
+                s.dropdownTrigger,
+                { backgroundColor: colors.cardBackgroundLight, borderColor: colors.border },
+              ]}
+            >
+              <Text style={[s.dropdownTriggerText, { color: colors.textPrimary }]}>
+                {STATE_LABELS[selectedState] ?? selectedState}
+              </Text>
+              <Ionicons
+                name={dropdownOpen ? "chevron-up" : "chevron-down"}
+                size={14}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+            {dropdownOpen && (
+              <View
+                style={[
+                  s.dropdownMenu,
+                  { backgroundColor: colors.cardBackground, borderColor: colors.border },
+                ]}
+              >
+                {stateOptions.map((opt) => (
+                  <TouchableOpacity
+                    key={opt}
+                    onPress={() => {
+                      setSelectedState(opt);
+                      setDropdownOpen(false);
+                    }}
+                    style={[
+                      s.dropdownItem,
+                      opt === selectedState && { backgroundColor: `${colors.primary}18` },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        s.dropdownItemText,
+                        { color: opt === selectedState ? colors.primary : colors.textPrimary },
+                      ]}
+                    >
+                      {STATE_LABELS[opt] ?? opt}
+                    </Text>
+                    {opt === selectedState && (
+                      <Ionicons name="checkmark" size={14} color={colors.primary} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
         </View>
 
@@ -241,43 +289,6 @@ export default function GoalEditScreen() {
           />
         </View>
 
-        {/* State transitions */}
-        {availableTransitions.length > 0 && (
-          <View
-            style={[
-              s.transitionCard,
-              getCardStyle("small"),
-              {
-                backgroundColor: colors.cardBackground,
-                borderColor: colors.cardBorderHighlight,
-              },
-            ]}
-          >
-            <Text style={[s.fieldLabel, { color: colors.textTertiary }]}>MOVE TO</Text>
-            <View style={s.chipRow}>
-              {availableTransitions.map((to) => (
-                <TouchableOpacity
-                  key={to}
-                  onPress={() => handleTransition(to)}
-                  disabled={transitioning}
-                  style={[
-                    s.chip,
-                    {
-                      backgroundColor: colors.cardBackgroundLight,
-                      borderColor: colors.border,
-                      opacity: transitioning ? 0.5 : 1,
-                    },
-                  ]}
-                >
-                  <Text style={[s.chipText, { color: colors.textSecondary }]}>
-                    {STATE_LABELS[to]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
         {error && <Text style={[s.errorText, { color: "#E57373" }]}>{error}</Text>}
 
         <View style={{ height: insets.bottom + 100 }} />
@@ -328,20 +339,32 @@ const styles = (colors: ColorScheme) =>
     },
     headerTitle: { ...Typography.title3, color: colors.textPrimary },
     scroll: { paddingHorizontal: Spacing.xxl, paddingTop: Spacing.xs },
-    stateRow: {
+    stateLabel: { ...Typography.body2, marginBottom: Spacing.sm },
+    statusSection: { marginBottom: Spacing.lg },
+    dropdownTrigger: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: Spacing.lg,
-    },
-    stateLabel: { ...Typography.body2 },
-    stateBadge: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 6,
+      borderRadius: 10,
       borderWidth: 1,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.sm + 2,
     },
-    stateBadgeText: { ...Typography.body3, fontWeight: "600", letterSpacing: 0.5 },
+    dropdownTriggerText: { fontSize: 15 },
+    dropdownMenu: {
+      borderRadius: 10,
+      borderWidth: 1,
+      marginTop: 4,
+      overflow: "hidden",
+    },
+    dropdownItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.md,
+      paddingVertical: 12,
+    },
+    dropdownItemText: { fontSize: 15 },
     formCard: {
       padding: Spacing.lg,
       gap: Spacing.sm,
@@ -357,14 +380,6 @@ const styles = (colors: ColorScheme) =>
     },
     textarea: { height: 80, paddingTop: Spacing.sm },
     divider: { height: 1, marginVertical: Spacing.xs },
-    transitionCard: {
-      padding: Spacing.lg,
-      gap: Spacing.sm,
-      marginBottom: Spacing.lg,
-    },
-    chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-    chip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },
-    chipText: { fontSize: 13, fontWeight: "600" },
     errorText: { fontSize: 13, marginVertical: Spacing.sm },
     ctaContainer: {
       paddingHorizontal: Spacing.xxl,

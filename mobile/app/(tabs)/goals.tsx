@@ -45,6 +45,10 @@ export default function GoalsScreen() {
     .filter((g) => g.journeyId === null && ["active", "queued", "draft"].includes(g.state))
     .map(toGoal);
 
+  const inactiveGoals = apiGoals
+    .filter((g) => g.journeyId === null && ["paused", "completed", "abandoned"].includes(g.state))
+    .map(toGoal);
+
   const visibleJourneys = apiJourneys.filter((j) => j.state !== "archived").map(toJourneyAsGoal);
 
   const domainStats = computeDomainStats(apiGoals.filter((g) => g.journeyId === null));
@@ -81,6 +85,14 @@ export default function GoalsScreen() {
         ) : (
           <>
             <ActiveGoalsSection goals={visibleGoals} />
+            {inactiveGoals.length > 0 && (
+              <ActiveGoalsSection
+                goals={inactiveGoals}
+                sectionTitle="Inactive Goals"
+                countLabel="INACTIVE"
+                dotColor={colors.textTertiary}
+              />
+            )}
             {domainStats.length > 0 && <DomainGrid domainStats={domainStats} allStats={allStats} />}
           </>
         )}
