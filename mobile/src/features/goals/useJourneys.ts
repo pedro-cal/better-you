@@ -1,19 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/src/lib/apiClient";
-import type { LifeDomain } from "@better-you/shared";
+import type { ApiJourney } from "@better-you/shared";
 import type { Goal } from "@/data/types";
 
-export interface ApiJourney {
-  id: string;
-  userId: string;
-  domain: LifeDomain;
-  title: string;
-  description: string | null;
-  narrative: string | null;
-  state: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { ApiJourney };
 
 export function toJourneyAsGoal(j: ApiJourney): Goal {
   return {

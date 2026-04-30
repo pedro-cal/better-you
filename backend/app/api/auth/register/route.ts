@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { users } from '@/src/db/schema';
 import { signJwt } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
-
-const RegisterSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1).max(100),
-  password: z.string().min(8),
-});
+import { RegisterSchema } from '@better-you/shared';
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);

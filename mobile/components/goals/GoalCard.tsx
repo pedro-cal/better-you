@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { getCardStyle, Spacing, Typography } from "@/constants/DesignTokens";
 import { Goal, GoalStep, CheckIn, EngagementStatus, GoalStepStatus } from "@/data/types";
@@ -151,6 +152,7 @@ function StepRow({ step }: { step: GoalStep }) {
 
 export function GoalCard({ goal }: GoalCardProps) {
   const { colors } = useTheme();
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const iconDef = DOMAIN_ICONS[goal.domain];
 
@@ -265,6 +267,19 @@ export function GoalCard({ goal }: GoalCardProps) {
               ))}
             </>
           )}
+
+          {/* Edit footer */}
+          <View style={[styles.editFooter, { borderTopColor: colors.border }]}>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                router.push(`/goals/${goal.id}`);
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={[styles.editLink, { color: colors.textTertiary }]}>Edit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </TouchableOpacity>
@@ -429,5 +444,16 @@ const styles = StyleSheet.create({
   stepDivider: {
     height: 1,
     marginLeft: 22,
+  },
+  editFooter: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingTop: Spacing.sm,
+    marginTop: Spacing.xs,
+    borderTopWidth: 1,
+  },
+  editLink: {
+    fontSize: 13,
+    fontWeight: "500",
   },
 });

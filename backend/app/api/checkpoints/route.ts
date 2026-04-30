@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { checkpoints, goals } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq } from 'drizzle-orm';
-
-const CreateCheckpointSchema = z.object({
-  goalId: z.string().uuid(),
-  prompt1: z.string().max(500).optional(),
-  prompt2: z.string().max(500).optional(),
-  prompt3: z.string().max(500).optional(),
-  response1: z.string().max(2000).optional(),
-  response2: z.string().max(2000).optional(),
-  response3: z.string().max(2000).optional(),
-});
+import { CreateCheckpointSchema } from '@better-you/shared';
 
 export const POST = withAuth(async (req, { userId }) => {
   const body = await req.json().catch(() => null);

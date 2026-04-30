@@ -1,22 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/src/lib/apiClient";
 import type { LifeDomain, DomainStats, AllDomainStats } from "@better-you/shared";
+import type { ApiGoal } from "@better-you/shared";
 import type { Goal, GoalStatus } from "@/data/types";
 
-export interface ApiGoal {
-  id: string;
-  userId: string;
-  journeyId: string | null;
-  domain: LifeDomain;
-  title: string;
-  intent: string | null;
-  completionCriteria: string | null;
-  state: string;
-  activatedAt: string | null;
-  completedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { ApiGoal };
 
 const STATE_TO_STATUS: Record<string, GoalStatus> = {
   active: "ACTIVE",

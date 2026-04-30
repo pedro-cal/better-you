@@ -1,17 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/src/lib/apiClient";
-import type { LifeDomain } from "@better-you/shared";
-import type { ApiGoal } from "./useGoals";
-
-type GoalState = "queued" | "draft" | "active" | "paused" | "completed" | "abandoned" | "archived";
-
-interface CreateGoalVars {
-  domain: LifeDomain;
-  title: string;
-  intent?: string;
-  completionCriteria?: string;
-  journeyId?: string;
-}
+import type { ApiGoal, GoalState, CreateGoalInput } from "@better-you/shared";
 
 interface CreateGoalResult {
   goal: ApiGoal;
@@ -21,7 +10,7 @@ interface CreateGoalResult {
 export function useCreateGoal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (vars: CreateGoalVars) =>
+    mutationFn: (vars: CreateGoalInput) =>
       apiFetch<CreateGoalResult>("/api/goals", {
         method: "POST",
         body: JSON.stringify(vars),

@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { goals, paths, steps } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
-
-const PatchStepSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  state: z.enum(['pending', 'completed', 'skipped', 'retired']).optional(),
-  cadence: z.string().optional(),
-  estimatedMinutes: z.number().int().positive().nullable().optional(),
-  allowedWeekdays: z.array(z.string()).nullable().optional(),
-  order: z.number().int().min(0).optional(),
-}).refine((d) => Object.keys(d).length > 0, { message: 'No fields to update' });
+import { PatchStepSchema } from '@better-you/shared';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: stepId } = await params;

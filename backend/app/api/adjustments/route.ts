@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { adjustments, steps, paths, goals } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
-
-const CreateAdjustmentSchema = z.object({
-  stepId: z.string().uuid(),
-  type: z.enum(['cadence_change', 'reschedule', 'minutes_change', 'other']),
-  reason: z.string().max(500).optional(),
-  before: z.record(z.string(), z.unknown()).optional(),
-  after: z.record(z.string(), z.unknown()),
-});
+import { CreateAdjustmentSchema } from '@better-you/shared';
 
 export const POST = withAuth(async (req, { userId }) => {
   const body = await req.json().catch(() => null);

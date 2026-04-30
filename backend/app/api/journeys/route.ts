@@ -1,21 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { journeys } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq } from 'drizzle-orm';
+import { CreateJourneySchema } from '@better-you/shared';
 import type { LifeDomain } from '@better-you/shared';
-
-const LIFE_DOMAINS = [
-  'BODY', 'MIND', 'SOCIAL', 'WORK', 'MONEY', 'SERVICE', 'SPIRITUALITY',
-] as const;
-
-const CreateJourneySchema = z.object({
-  domain: z.enum(LIFE_DOMAINS),
-  title: z.string().min(1).max(200),
-  description: z.string().max(500).optional(),
-  narrative: z.string().max(1000).optional(),
-});
 
 export const GET = withAuth(async (req, { userId }) => {
   const { searchParams } = new URL(req.url);

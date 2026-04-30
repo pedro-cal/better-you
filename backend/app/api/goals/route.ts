@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { goals, availability, paths, pathTemplates } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
+import { CreateGoalSchema } from '@better-you/shared';
 import type { LifeDomain } from '@better-you/shared';
-
-const LIFE_DOMAINS = [
-  'BODY', 'MIND', 'SOCIAL', 'WORK', 'MONEY', 'SERVICE', 'SPIRITUALITY',
-] as const;
-
-const CreateGoalSchema = z.object({
-  domain: z.enum(LIFE_DOMAINS),
-  title: z.string().min(1).max(200),
-  intent: z.string().max(500).optional(),
-  completionCriteria: z.string().max(500).optional(),
-  journeyId: z.string().uuid().optional(),
-});
 
 export const GET = withAuth(async (req, { userId }) => {
   const { searchParams } = new URL(req.url);

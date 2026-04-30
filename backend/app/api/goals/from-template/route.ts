@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { goals, paths, steps, pathTemplates, availability } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
+import { FromTemplateSchema } from '@better-you/shared';
 import type { LifeDomain } from '@better-you/shared';
-
-const FromTemplateSchema = z.object({
-  templateId: z.string().uuid(),
-  title: z.string().min(1).max(200).optional(),
-  intent: z.string().max(500).optional(),
-  completionCriteria: z.string().max(500).optional(),
-  journeyId: z.string().uuid().optional(),
-});
 
 type TemplateStep = {
   title: string;

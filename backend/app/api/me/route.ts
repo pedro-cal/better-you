@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { users } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq } from 'drizzle-orm';
+import { PatchPreferencesSchema } from '@better-you/shared';
 
 export const GET = withAuth(async (_req, { userId }) => {
   const [user] = await db
@@ -28,15 +28,9 @@ export const GET = withAuth(async (_req, { userId }) => {
   return NextResponse.json({ data: user });
 });
 
-const PreferencesSchema = z.object({
-  preferredLocale: z.string().optional(),
-  focusWallEnabled: z.boolean().optional(),
-  pushToken: z.string().optional(),
-});
-
 export const PATCH = withAuth(async (req: NextRequest, { userId }) => {
   const body = await req.json().catch(() => null);
-  const parsed = PreferencesSchema.safeParse(body);
+  const parsed = PatchPreferencesSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.message }, { status: 400 });

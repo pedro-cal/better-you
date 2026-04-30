@@ -139,7 +139,7 @@
 - Wire the "GOALS" / "JOURNEYS" tab selector to actually filter content
 - Fix `BottomNav` `case "act"` on Goals tab (currently a no-op `break`)
 
-### F2.1 — Goal Creation Screens (Custom Goal Flow) `[ ]`
+### F2.1 — Goal Creation Screens (Custom Goal Flow) `[x]`
 **Scope**: Two-stage flow — define goal then add steps. Feels like one continuous action.
 
 - `mobile/app/goals/new-custom.tsx` — Stage 1: domain carousel + title + intent + completion criteria + journey link + overload strip; CTA "Next: Add Steps →"
@@ -151,7 +151,7 @@
 
 ---
 
-## F3 — Home/Act Screen (Real Data) `[ ]`
+## F3 — Home/Act Screen (Real Data) `[x]`
 **Prerequisites**: F1 `[x]`, B5 `[x]`  
 **Scope**: Remove mock imports from `mobile/app/(tabs)/index.tsx`.
 

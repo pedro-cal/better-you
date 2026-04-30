@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { goals, paths, steps } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and, asc } from 'drizzle-orm';
-
-const CreateStepSchema = z.object({
-  title: z.string().min(1).max(200),
-  type: z.enum(['recurring', 'one_time']).default('recurring'),
-  cadence: z.string().optional(),
-  estimatedMinutes: z.number().int().positive().optional(),
-  allowedWeekdays: z.array(z.string()).optional(),
-  order: z.number().int().min(0).optional(),
-});
+import { CreateStepSchema } from '@better-you/shared';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: goalId } = await params;

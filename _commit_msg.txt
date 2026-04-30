@@ -1,0 +1,16 @@
+feat: centralize schemas, wire real data screens, goal edit flow
+
+- shared/src/schemas.ts: complete rewrite with product Zod schemas (Goals,
+  Steps, Checkins, Journeys, Auth, Checkpoints, Adjustments, Templates);
+  exports ApiGoal, ApiStep, ApiCheckin, ApiJourney, GoalState, CreateGoalInput
+- shared/src/types.ts: remove legacy Habit*, HabitEntry, Streak types
+- backend routes (13 files): remove inline z.object definitions, import
+  schemas from @better-you/shared
+- feat(F3): Home/Act screen wired to real API via useCheckins + useSubmitCheckin;
+  loading and empty states; step action submits POST /api/checkins
+- feat(F2.1): mark complete (screens + components already implemented)
+- feat(goal-edit): GET+PATCH /api/goals/:id; GoalCard Edit button in expanded
+  view; mobile/app/goals/[id].tsx edit screen with field editing and
+  state transitions
+- mobile feature hooks: ApiGoal, ApiJourney, ApiStep, ApiCheckin, GoalState
+  imported from @better-you/shared instead of hand-written interfaces

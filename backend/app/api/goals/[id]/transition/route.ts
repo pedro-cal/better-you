@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { goals } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
+import { TransitionGoalSchema } from '@better-you/shared';
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   draft: ['queued', 'active', 'abandoned'],
@@ -14,15 +14,11 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   abandoned: ['archived'],
 };
 
-const TransitionSchema = z.object({
-  to: z.enum(['queued', 'draft', 'active', 'paused', 'completed', 'abandoned', 'archived']),
-});
-
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return withAuth(async (req, { userId }) => {
     const body = await req.json().catch(() => null);
-    const parsed = TransitionSchema.safeParse(body);
+    const parsed = TransitionGoalSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });

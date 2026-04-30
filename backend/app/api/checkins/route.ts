@@ -1,18 +1,9 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/src/db';
 import { checkins, steps, paths, goals } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
-
-const CreateCheckinSchema = z.object({
-  stepId: z.string().uuid(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
-  status: z.enum(['done', 'skipped', 'missed']),
-  difficulty: z.number().int().min(1).max(5).optional(),
-  mood: z.number().int().min(1).max(5).optional(),
-  logText: z.string().max(1000).optional(),
-});
+import { CreateCheckinSchema } from '@better-you/shared';
 
 export const POST = withAuth(async (req, { userId }) => {
   const body = await req.json().catch(() => null);
