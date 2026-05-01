@@ -46,3 +46,23 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ data: updated });
   })(req);
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: stepId } = await params;
+  return withAuth(async (_, { userId }) => {
+    const [owned] = await db
+      .select({ stepId: steps.id })
+      .from(steps)
+      .innerJoin(paths, eq(paths.id, steps.pathId))
+      .innerJoin(goals, and(eq(goals.id, paths.goalId), eq(goals.userId, userId)))
+      .where(eq(steps.id, stepId))
+      .limit(1);
+
+    if (!owned) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    await db.delete(steps).where(eq(steps.id, stepId));
+    return NextResponse.json({ data: { id: stepId } });
+  })(req);
+}

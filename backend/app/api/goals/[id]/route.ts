@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/src/db';
-import { goals } from '@/src/db/schema';
+import { goals, paths, steps } from '@/src/db/schema';
 import { withAuth } from '@/lib/withAuth';
 import { eq, and } from 'drizzle-orm';
 import { PatchGoalSchema } from '@better-you/shared';
@@ -55,5 +55,30 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .returning();
 
     return NextResponse.json({ data: updated });
+  })(req);
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return withAuth(async (_, { userId }) => {
+    const [existing] = await db
+      .select({ id: goals.id })
+      .from(goals)
+      .where(and(eq(goals.id, id), eq(goals.userId, userId)))
+      .limit(1);
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    // Cascade: delete steps → paths → goal
+    const goalPaths = await db.select({ id: paths.id }).from(paths).where(eq(paths.goalId, id));
+    for (const path of goalPaths) {
+      await db.delete(steps).where(eq(steps.pathId, path.id));
+    }
+    await db.delete(paths).where(eq(paths.goalId, id));
+    await db.delete(goals).where(eq(goals.id, id));
+
+    return NextResponse.json({ data: { id } });
   })(req);
 }
